@@ -18,16 +18,18 @@ describe oracle_exec do
     @resource = @class.new({:name  => 'show_all'})
   end
 
-
-  it 'should have :command be its namevar' do
-    @class.key_attributes.should == [:command]
-  end
-
   describe ':command' do
 
-    it_behaves_like 'an easy_type attribute', {
-      :attribute          => :command
-    }
+    it 'should have :command be its namevar' do
+      @class.key_attributes.should == [:command]
+    end
+  end
+
+  describe ':logoutput' do
+
+    it 'should have :logoutput attribute' do
+      @class.parameters.should include(:logoutput)
+    end
   end
 
 

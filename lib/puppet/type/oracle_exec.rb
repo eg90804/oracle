@@ -15,14 +15,18 @@ module Puppet
 
     desc "This resource allows you to execute any sql command in a database"
 
+    ensurable
+
     set_command(:sql)
 
     to_get_raw_resources do
       []
     end
 
-    on_create do
-      self[:command]
+    on_create do 
+      output = sql self[:command]
+      send_log(:info, output) if self[:logoutput] == :true
+      '' # return empty string because we already did our stuff
     end
 
     on_modify do
@@ -33,7 +37,8 @@ module Puppet
       fail "It shouldn't be possible to destroy an oracle_exec"
     end
 
-    property :command
+    property  :command
+    parameter :logoutput
 
   end
 end
