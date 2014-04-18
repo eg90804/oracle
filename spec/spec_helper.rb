@@ -15,4 +15,6 @@ RSpec.configure do |c|
   c.mock_with :rspec 
 end
 
+require 'easy_type'
+InstancesResults = EasyType::Helpers::InstancesResults
 require 'support/easy_type_shared_specs'

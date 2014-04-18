@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 tablespace = Puppet::Type.type(:tablespace)
-InstancesResults = EasyType::Helpers::InstancesResults
 
 describe tablespace do
 
