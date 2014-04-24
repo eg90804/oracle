@@ -23,8 +23,7 @@ module Puppet
     end
 
     on_create do
-      new_services = current_services << name
-      set_services_command(new_services)
+      "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}');"
     end
 
     on_modify do
@@ -32,21 +31,10 @@ module Puppet
     end
 
     on_destroy do
-      new_services = current_services.delete_if {|e| e == name }
-      set_services_command(new_services)
+      "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}');"
     end
 
     parameter :name
-
-    private
-
-      def set_services_command(services)
-        "alter system set service_names = '#{services.join(',')}'"        
-      end
-
-      def current_services
-        provider.class.instances.map(&:name)
-      end
 
   end
 end
