@@ -22,15 +22,15 @@ module Puppet
       sql "select name from dba_services"
     end
 
-    on_create do
+    on_create do | command_builder |
       "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}');"
     end
 
-    on_modify do
+    on_modify do | command_builder |
       fail "It shouldn't be possible to modify a service"
     end
 
-    on_destroy do
+    on_destroy do | command_builder |
       "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}');"
     end
 

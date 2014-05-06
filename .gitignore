@@ -5,3 +5,5 @@
 /.vagrant/
 
 pkg
+
+/spec/fixtures/

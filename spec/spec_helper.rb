@@ -4,7 +4,7 @@ require 'puppetlabs_spec_helper/puppet_spec_helper'
 require 'rspec'
 
 # Set prepend lib's from all modules to current path
-module_path = Pathname(__FILE__).parent.parent + 'modules'
+module_path = Pathname(__FILE__).parent + 'fixtures' + 'modules'
 module_path.children.each  do | dir |
   lib_path = dir + 'lib'
   $:.unshift(lib_path)

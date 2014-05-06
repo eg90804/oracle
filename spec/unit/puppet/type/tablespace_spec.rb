@@ -94,7 +94,7 @@ describe tablespace do
         end
 
         it "returns 'logging'" do
-          expect(attribute.on_apply).to eq 'logging'
+          expect(attribute.on_apply(nil)).to eq 'logging'
         end
       end
 
@@ -105,7 +105,7 @@ describe tablespace do
         end
 
         it "returns 'nologging'" do
-          expect(attribute.on_apply).to eq 'nologging'
+          expect(attribute.on_apply(nil)).to eq 'nologging'
         end
       end
     end

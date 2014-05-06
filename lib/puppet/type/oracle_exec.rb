@@ -23,17 +23,17 @@ module Puppet
       []
     end
 
-    on_create do 
+    on_create do | command_builder |
       output = sql self[:command]
       send_log(:info, output) if self[:logoutput] == :true
       '' # return empty string because we already did our stuff
     end
 
-    on_modify do
+    on_modify do | command_builder |
       fail "It shouldn't be possible to modify an oracle_exec"
     end
 
-    on_destroy do
+    on_destroy do | command_builder |
       fail "It shouldn't be possible to destroy an oracle_exec"
     end
 
