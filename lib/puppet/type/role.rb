@@ -24,15 +24,15 @@ module Puppet
     end
 
     on_create do | command_builder |
-    	"create role #{self[:name]}"
+    	"create role #{name}"
     end
 
     on_modify do | command_builder |
-      "alter role#{self[:name]}"
+      "alter role#{name}"
     end
 
     on_destroy do | command_builder |
-      "drop role#{self[:name]}"
+      "drop role#{name}"
     end
 
     parameter :name

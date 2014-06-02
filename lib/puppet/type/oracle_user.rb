@@ -27,8 +27,8 @@ module Puppet
     end
 
     on_create do | command_builder |
-      if self[:password]
-        "create user #{name} identified by #{self[:password]}"
+      if password
+        "create user #{name} identified by #{password}"
       else
         "create user #{name}"
       end
