@@ -23,7 +23,7 @@ module Puppet
     end
 
     on_create do | command_builder |
-      "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}');"
+      "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}')"
     end
 
     on_modify do | command_builder |
@@ -31,7 +31,7 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}');"
+      "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}')"
     end
 
     parameter :name

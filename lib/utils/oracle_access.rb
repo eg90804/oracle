@@ -1,5 +1,6 @@
 require 'tempfile'
 require 'fileutils'
+require 'utils/ora_daemon'
 
 module Utils
   module OracleAccess
@@ -43,15 +44,11 @@ module Utils
 
     def execute_sql(command, parameters)
       db_sid = parameters.fetch(:sid) { raise ArgumentError, "No sid specified"}
+      daemon = OraDaemon.run('oracle', db_sid)
       outFile = Tempfile.new([ 'output', '.csv' ])
       outFile.close
       FileUtils.chmod(0777, outFile.path)
-      tmpFile = Tempfile.new([ 'sql', '.sql' ])
-      tmpFile.puts template('puppet:///modules/oracle/execute.sql.erb', binding)
-      tmpFile.close
-      FileUtils.chmod(0555, tmpFile.path)
-      output = `su - oracle -c 'export ORACLE_SID=#{db_sid};export ORAENV_ASK=NO;. oraenv;sqlplus -s /nolog @#{tmpFile.path}'`
-      raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
+      daemon.execute_sql_command(command, outFile.path)
       File.read(outFile.path)
     end
 
