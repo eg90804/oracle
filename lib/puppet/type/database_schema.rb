@@ -37,13 +37,20 @@ module Puppet
     end
 
     to_get_raw_resources do
-      # TODO
+      get_schema_version
     end
 
     parameter :name
     parameter :password
     property  :version
     property  :source
+
+    private
+
+    def get_schema_version
+      statement = "select * from schema_versie where systeem = '$system' and versie = '$version' and module = '$module';"
+      sql statement, :username => username, :password => password
+    end
 
   end
 end

@@ -23,7 +23,7 @@ module Utils
         oratab.first[:sid] # For now if no sid is given always use the first one
       }
       username = parameters.fetch(:username) { 'sysdba'}
-      password = parameters.fetch(:password) 
+      password = parameters[:password] # nil is allowed
 
       Puppet.info "Executing: #{command} on database #{sid}"
       csv_string = execute_sql(command, :sid => sid, :username => username, :password => password)
