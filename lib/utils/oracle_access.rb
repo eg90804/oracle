@@ -22,8 +22,11 @@ module Utils
       sid = parameters.fetch(:sid) {
         oratab.first[:sid] # For now if no sid is given always use the first one
       }
+      username = parameters.fetch(:username) { 'sysdba'}
+      password = parameters.fetch(:password) 
+
       Puppet.info "Executing: #{command} on database #{sid}"
-      csv_string = execute_sql(command, :sid => sid)
+      csv_string = execute_sql(command, :sid => sid, :username => username, :password => password)
       convert_csv_data_to_hash(csv_string, [], :converters=> lambda {|f| f ? f.strip : nil})
     end
 

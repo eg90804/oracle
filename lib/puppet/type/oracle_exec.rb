@@ -24,8 +24,8 @@ module Puppet
     end
 
     on_create do | command_builder |
-      output = sql self[:command]
-      send_log(:info, output) if self[:logoutput] == :true
+      output = sql command, :username => username, :password => password
+      send_log(:info, output) if logoutput == :true
       '' # return empty string because we already did our stuff
     end
 
@@ -37,8 +37,10 @@ module Puppet
       fail "It shouldn't be possible to destroy an oracle_exec"
     end
 
-    property  :command
     parameter :logoutput
+    parameter :password
+    parameter :username
+    property  :command
 
   end
 end
