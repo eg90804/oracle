@@ -15,34 +15,32 @@ module Puppet
 
     desc "This resource allows you to execute any sql command in a database"
 
-    ensurable
 
-    set_command(:sql)
 
-    to_get_raw_resources do
-      []
+   def self.title_patterns
+      # require 'ruby-debug'
+      # debugger
+      [
+        [
+          /^((.*))$/,
+          [
+            [ :statement      , nil     ],
+            [ :name           , nil      ],
+          ]
+        ],
+      ]
     end
 
-    on_create do | command_builder |
-      output = sql command, :username => username, :password => password
-      send_log(:info, output) if logoutput == :true
-      '' # return empty string because we already did our stuff
-    end
-
-    on_modify do | command_builder |
-      fail "It shouldn't be possible to modify an oracle_exec"
-    end
-
-    on_destroy do | command_builder |
-      fail "It shouldn't be possible to destroy an oracle_exec"
-    end
-
+    parameter :name
     parameter :logoutput
     parameter :password
     parameter :username
-    property  :command
+    property  :statement
 
   end
+
+
 end
+
 
 

@@ -47,7 +47,9 @@ module Utils
 
     def execute_sql(command, parameters)
       db_sid = parameters.fetch(:sid) { raise ArgumentError, "No sid specified"}
-      daemon = OraDaemon.run('oracle', db_sid)
+      username = parameters.fetch(:username) { 'sysdba'}
+      password = parameters[:password] # null allowd
+      daemon = OraDaemon.run('oracle', db_sid, username, password)
       outFile = Tempfile.new([ 'output', '.csv' ])
       outFile.close
       FileUtils.chmod(0777, outFile.path)

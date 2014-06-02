@@ -23,7 +23,6 @@ class OraDaemon < EasyType::Daemon
     Puppet.info "Starting the Oracle daemon for user #{@user} on sid #{sid}"
     command = "export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv;sqlplus -S /nolog"
     super(self.class.identity(sid,oraUser), command, user )
-    connect_to_oracle
     initial_setup
   end
 
