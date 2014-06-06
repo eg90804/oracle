@@ -3,7 +3,7 @@ require 'easy_type'
 class OraDaemon < EasyType::Daemon
   include EasyType::Template
 
-  ORACLE_ERROR = /ORA-.*|SP-.*/
+  ORACLE_ERROR = /ORA-.*|SP-.*|SP2-.*/
 
 
   def self.run(user, sid, oraUser='sysdba', oraPassword=nil)
@@ -43,7 +43,7 @@ class OraDaemon < EasyType::Daemon
 
     def connect_to_oracle
       Puppet.info "Connecting to Oracle sid #{@sid} with user #{@oraUser}"
-      if @oraUser == 'sysdba'
+      if @oraUser.downcase == 'sysdba'
         execute_command "connect / as sysdba;"
       else
         execute_command "connect #{@oraUser}/#{@oraPassword};"
