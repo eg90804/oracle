@@ -22,19 +22,33 @@ module Puppet
       sql "select name from dba_services"
     end
 
-    on_create do | command_builder |
-      "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}')"
+    on_create do
+      sql "exec dbms_service.create_service('#{name}', '#{name}'); dbms_service.start_service('#{name}')"
+      new_services = current_services << name
+      set_services_command(new_services)
     end
 
-    on_modify do | command_builder |
+    on_modify do
       fail "It shouldn't be possible to modify a service"
     end
 
-    on_destroy do | command_builder |
-      "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}')"
+    on_destroy do
+      sql  "exec dbms_service.stop_service('#{name}'); dbms_service.delete_service('#{name}')"
+      new_services = current_services.delete_if {|e| e == name }
+      set_services_command(new_services)
     end
 
     parameter :name
+
+    private
+
+      def set_services_command(services)
+        "alter system set service_names = '#{services.join('\',\'')}' scope=both"
+      end
+
+      def current_services
+        provider.class.instances.map(&:name)
+      end
 
   end
 end
