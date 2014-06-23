@@ -16,15 +16,15 @@ module Puppet
     ensurable
 
     on_create do | command_builder |
-      "alter system set \"#{name}\" = #{self[:value]} scope=#{param_scope}"
+      "alter system set \"#{name}\" = #{self[:value]} scope=spfile"
     end
 
     on_modify do | command_builder |
-      "alter system set \"#{name}\" = #{self[:value]} scope=#{param_scope}"
+      "alter system set \"#{name}\" = #{self[:value]} scope=spfile"
     end
 
     on_destroy do | command_builder |
-      "alter system reset \"#{name}\" scope=#{param_scope}"
+      "alter system reset \"#{name}\" scope=spfile"
     end
 
     to_get_raw_resources do
@@ -34,14 +34,6 @@ module Puppet
     parameter :name
     property  :value
     property  :ismodifiable
-
-    def param_scope
-      if self['ismodifiable'] == :yes
-        'both'
-      else
-        'spfile'
-      end
-    end
 
   end
 end
