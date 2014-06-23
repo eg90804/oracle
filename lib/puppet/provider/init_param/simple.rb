@@ -1,7 +1,7 @@
 require 'utils/oracle_access'
 require 'easy_type'
 
-Puppet::Type.type(:parameter).provide(:simple) do
+Puppet::Type.type(:init_param).provide(:simple) do
 	include EasyType::Provider
 	include ::Utils::OracleAccess
 
