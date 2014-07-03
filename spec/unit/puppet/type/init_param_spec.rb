@@ -50,13 +50,40 @@ describe init_param do
       lambda { @resource[:name] = '' }.should raise_error(Puppet::Error)
     end
 
-
     it_behaves_like 'an easy_type attribute', {
       :attribute          => :name,
       :result_identifier  => 'NAME',
       :raw_value          => 'MEMORY_TARGET',
       :test_value         => 'MEMORY_TARGET',
     }
+  end
+
+  describe ':value' do
+
+    let(:attribute_name) { :value}
+
+    context "when geting data from the system" do
+
+      it 'should raise an error when name not found in raw_results' do
+        raw_resource = InstancesResults['NAME','MY_NAME']
+        expect{attribute_class.translate_to_resource(raw_resource)}.to raise_error(RuntimeError)
+      end
+
+      it 'should pick its value from element DISPLAY_VALUE' do
+        raw_resource = InstancesResults['DISPLAY_VALUE','42G']
+        expect(attribute_class.translate_to_resource(raw_resource)).to eq '42G' 
+      end
+
+    end
+
+    context "base parameter settings" do
+      it 'should accept a value and not modify it' do
+        @resource[:value] = 'none'
+        expect(@resource[:value]).to eq 'none'
+      end
+
+    end
+
   end
 
 end
