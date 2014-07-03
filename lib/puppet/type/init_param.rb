@@ -28,12 +28,11 @@ module Puppet
     end
 
     to_get_raw_resources do
-      sql %q{select name, display_value, case issys_modifiable when 'FALSE' then 'NO' else 'YES' end MOD from v$parameter } 
+      sql %q{select name, display_value from v$parameter } 
     end
 
     parameter :name
     property  :value
-    property  :ismodifiable
 
   end
 end
