@@ -9,13 +9,18 @@ newproperty(:size) do
     raw_resource.column_data('BYTES').to_i
   end
 
-
   on_apply do | command_builder|
-    if resource[:datafile]
-      "size #{resource[:size]}"
+    size_statement = is_modified? ? 'resize' : 'size'
+    if resource[:datafile].nil?
+      "#{size_statement} #{resource[:size]}"
     else
-      "datafile size #{resource[:size]}"
+      "datafile #{resource[:datafile]} #{size_statement} #{resource[:size]}"
     end
   end
+
+  private
+    def is_modified?
+      retrieve != :absent
+    end
 
 end
