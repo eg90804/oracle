@@ -3,7 +3,8 @@ require 'easy_type'
 class OraDaemon < EasyType::Daemon
   include EasyType::Template
 
-  ORACLE_ERROR = /ORA-.*|SP-.*|SP2-.*/
+  ORACLE_ERROR    = /ORA-.*|SP-.*|SP2-.*/
+  DEFAULT_TIMEOUT = 300 # 5 minutes
 
 
   def self.run(user, sid, oraUser='sysdba', oraPassword=nil)
@@ -22,7 +23,7 @@ class OraDaemon < EasyType::Daemon
     @oraPassword = oraPassword
     Puppet.info "Starting the Oracle daemon for user #{@user} on sid #{sid}"
     command = "export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv;sqlplus -S /nolog"
-    super(self.class.identity(sid,oraUser), command, user )
+    super(self.class.identity(sid,oraUser), command, user, DEFAULT_TIMEOUT )
     initial_setup
   end
 
