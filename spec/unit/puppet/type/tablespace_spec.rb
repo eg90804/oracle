@@ -145,7 +145,7 @@ describe tablespace do
       :result_identifier  => 'BYTES',
       :raw_value          => '1000',
       :test_value         => 1000,
-      :apply_text         => 'datafile size 1000'
+      :apply_text         => 'size 1000'
     }
   end
 
@@ -156,7 +156,6 @@ describe tablespace do
       :result_identifier  => 'FILE_NAME',
       :raw_value          => 'a_file_name.txt',
       :test_value         => 'a_file_name.txt',
-      :apply_text         => "datafile 'a_file_name.txt'"
     }
 
 
