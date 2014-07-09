@@ -52,7 +52,8 @@ module Utils
       daemon = OraDaemon.run('oracle', db_sid, username, password)
       outFile = Tempfile.new([ 'output', '.csv' ])
       outFile.close
-      FileUtils.chmod(0777, outFile.path)
+      FileUtils.chown('oracle', nil, outFile.path)
+      FileUtils.chmod(0644, outFile.path)
       daemon.execute_sql_command(command, outFile.path)
       File.read(outFile.path)
     end
