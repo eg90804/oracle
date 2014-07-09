@@ -92,11 +92,12 @@ This type allows you to manage a tablespace inside an Oracle Database. It recogn
 ```puppet
 tablespace {'my_app_ts':
   ensure                    => present,
-  size                      => 20G,
+  datafile                  => 'my_app_ts.dbf',
+  size                      => 5G,
   logging                   => yes,
   autoextend                => on,
   next                      => 100M,
-  max_size                  => 12288M,
+  max_size                  => 20G,
   extent_management         => local,
   segment_space_management  => auto,
 }

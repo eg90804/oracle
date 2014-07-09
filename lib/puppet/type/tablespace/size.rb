@@ -14,7 +14,7 @@ newproperty(:size) do
     if resource[:datafile].nil?
       "#{size_statement} #{resource[:size]}"
     else
-      "datafile #{resource[:datafile]} #{size_statement} #{resource[:size]}"
+      "datafile '#{resource[:datafile]}' #{size_statement} #{resource[:size]}"
     end
   end
 
