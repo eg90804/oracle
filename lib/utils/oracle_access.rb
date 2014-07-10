@@ -24,7 +24,6 @@ module Utils
       }
       username = parameters.fetch(:username) { 'sysdba'}
       password = parameters[:password] # nil is allowed
-
       Puppet.info "Executing: #{command} on database #{sid}"
       csv_string = execute_sql(command, :sid => sid, :username => username, :password => password)
       convert_csv_data_to_hash(csv_string, [], :converters=> lambda {|f| f ? f.strip : nil})
@@ -54,13 +53,27 @@ module Utils
       outFile.close
       FileUtils.chown('oracle', nil, outFile.path)
       FileUtils.chmod(0644, outFile.path)
-      daemon.execute_sql_command(command, outFile.path)
+      if timeout_specified
+        daemon.execute_sql_command(command, outFile.path, timeout_specified)
+      else
+        daemon.execute_sql_command(command, outFile.path)
+      end
       File.read(outFile.path)
     end
 
     def comment?(line)
       line.start_with?('#') || line.start_with?("\n")
     end
+
+    # This is a little hack to get a specified timeout value
+     def timeout_specified
+      if respond_to?(:to_hash)
+        to_hash.fetch(:timeout) { nil} #
+      else
+        nil
+      end
+    end
+
 
   end
 end

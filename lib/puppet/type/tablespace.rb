@@ -34,6 +34,7 @@ module Puppet
     end
 
     parameter :name
+    parameter :timeout
     property  :bigfile
     property  :datafile
     property  :size
