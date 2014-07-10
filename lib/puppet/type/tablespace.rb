@@ -16,7 +16,9 @@ module Puppet
     ensurable
 
     on_create do | command_builder |
-      "create #{ts_type} tablespace \"#{name}\""
+      base_command = "create #{ts_type} tablespace \"#{name}\""
+      base_command << "segment space management #{segment_space_management}" if segment_space_management
+      base_command
     end
 
     on_modify do | command_builder |
@@ -52,14 +54,14 @@ module Puppet
     property  :bigfile
     property  :datafile
     property  :size
-    group(:autoextend_info) do
-      property :autoextend
-      property :next
-      property :max_size
+    group(:autoextend_group) do
+      property  :autoextend
+      property  :next
+      property  :max_size
     end
-    property :extent_management
-    property :segment_space_management
-    property :logging
+    property  :extent_management
+    property  :segment_space_management
+    property  :logging
 
 
     def ts_type

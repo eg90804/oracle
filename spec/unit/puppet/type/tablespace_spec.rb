@@ -145,7 +145,8 @@ describe tablespace do
       :result_identifier  => 'BYTES',
       :raw_value          => '1000',
       :test_value         => 1000,
-      :apply_text         => 'size 1000'
+      :create_text        => 'size 1000',
+      :modify_text        => 'resize 1000'
     }
   end
 
@@ -186,8 +187,7 @@ describe tablespace do
       :attribute          => :segment_space_management,
       :result_identifier  => 'SEGMEN',
       :raw_value          => 'AUTO',
-      :test_value         => :auto,
-      :apply_text         => "segment space management auto"
+      :test_value         => :auto
     }
 
   end
@@ -222,8 +222,9 @@ describe tablespace do
     it_behaves_like 'an easy_type attribute', {
       :attribute          => :next,
       :raw_resource       => { 'BLOCK_SIZE' => '1024', 'INCREMENT_BY' => '100'},
-      :test_value         => 102400,
-      :apply_text         => 'next 102400'
+      :test_value         => 102400
+      # :apply_text         => 'next 102400'
+      # TODO: add tests to see if this get's added when extendmanagement is on
     }
 
   end
@@ -234,8 +235,9 @@ describe tablespace do
       :attribute          => :max_size,
       :result_identifier  => 'MAX_SIZE',
       :raw_value          => '1000000.123',
-      :test_value         => 1000000,
-      :apply_text         => "maxsize 1000000"
+      :test_value         => 1000000
+      # :apply_text         => "maxsize 1000000"
+      # TODO: add tests to see if this get's added when extendmanagement is on
     }
 
   end
