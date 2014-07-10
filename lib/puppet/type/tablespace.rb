@@ -30,24 +30,7 @@ module Puppet
     end
 
     to_get_raw_resources do
-      sql %q{select 
-        t.tablespace_name,
-        logging,
-        extent_management,
-        segment_space_management,
-        bigfile,
-        file_name,
-        to_char(increment_by, '9999999999999999999') "INCREMENT_BY",
-        to_char(block_size, '9999999999999999999') "BLOCK_SIZE",
-        autoextensible,
-        bytes,
-        to_char(maxbytes, '9999999999999999999') "MAX_SIZE"
-      from 
-        dba_tablespaces t, 
-        dba_data_files f 
-      where
-        t.tablespace_name = f.tablespace_name
-      }
+      sql(template('puppet:///modules/oracle/tablespace_index.sql', binding))
     end
 
     parameter :name
