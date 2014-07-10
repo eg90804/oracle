@@ -50,10 +50,8 @@ module Puppet
 
     parameter :name
     property  :bigfile
-    group(:datafile) do
-      property  :datafile
-      property  :size
-    end
+    property  :datafile
+    property  :size
     group(:autoextend_info) do
       property :autoextend
       property :next
@@ -61,7 +59,7 @@ module Puppet
     end
     property :extent_management
     property :segment_space_management
-    property  :logging
+    property :logging
 
 
     def ts_type

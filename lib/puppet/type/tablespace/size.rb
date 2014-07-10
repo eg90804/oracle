@@ -10,11 +10,14 @@ newproperty(:size) do
   end
 
   on_apply do | command_builder|
-    size_statement = is_modified? ? 'resize' : 'size'
-    if resource[:datafile].nil?
-      "#{size_statement} #{resource[:size]}"
+    if is_modified?
+      "resize #{resource[:size]}"
     else
-      "datafile '#{resource[:datafile]}' #{size_statement} #{resource[:size]}"
+      if resource[:datafile].nil?
+        "size #{resource[:size]}"
+      else
+        "datafile '#{resource[:datafile]}' size #{resource[:size]}"
+      end
     end
   end
 
