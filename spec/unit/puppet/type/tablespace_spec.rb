@@ -145,7 +145,7 @@ describe tablespace do
       :result_identifier  => 'BYTES',
       :raw_value          => '1000',
       :test_value         => 1000,
-      :create_text        => 'size 1000',
+      :create_text        => 'datafile size 1000',
       :modify_text        => 'resize 1000'
     }
   end

@@ -17,7 +17,7 @@ module Puppet
 
     on_create do | command_builder |
       base_command = "create #{ts_type} tablespace \"#{name}\""
-      base_command << "segment space management #{segment_space_management}" if segment_space_management
+      base_command << " segment space management #{segment_space_management}" if segment_space_management
       base_command
     end
 

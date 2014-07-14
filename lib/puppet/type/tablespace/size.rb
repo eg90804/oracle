@@ -15,7 +15,7 @@ newproperty(:size) do
 
   on_create do | command_builder|
     if resource[:datafile].nil?
-      "size #{resource[:size]}"
+      "datafile size #{resource[:size]}"
     else
       "datafile '#{resource[:datafile]}' size #{resource[:size]}"
     end
