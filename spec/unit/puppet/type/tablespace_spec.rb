@@ -137,6 +137,13 @@ describe tablespace do
 
   end
 
+  describe ':timeout' do
+
+    it 'should have :timeout attribute' do
+      @class.parameters.should include(:timeout)
+    end
+  end
+
 
   describe ':size' do
 

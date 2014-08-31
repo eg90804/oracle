@@ -32,6 +32,7 @@ module Puppet
     end
 
     parameter :name
+    parameter :timeout
     parameter :logoutput
     parameter :password
     parameter :username

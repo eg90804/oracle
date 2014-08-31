@@ -25,6 +25,14 @@ describe oracle_exec do
     end
   end
 
+  describe ':timeout' do
+
+    it 'should have :timeout attribute' do
+      @class.parameters.should include(:timeout)
+    end
+  end
+
+
   describe ':logoutput' do
 
     it 'should have :logoutput attribute' do
