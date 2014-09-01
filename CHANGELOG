@@ -1,3 +1,8 @@
-YYYY-MM-DD Release 0.0.1
-- something you did
-- something else you did
+History
+========
+
+01-09-2014  version 0.3.0
+--------------------------
+Added support for multiple SID's
+
+Before this, history not realy recorded. Look at git history for details

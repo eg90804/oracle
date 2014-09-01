@@ -3,6 +3,8 @@ $:.unshift(Pathname.new(__FILE__).dirname.parent.parent)
 $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_type' + 'lib')
 require 'easy_type'
 require 'utils/oracle_access'
+require 'utils/title_parser'
+
 
 module Puppet
   #
@@ -12,31 +14,20 @@ module Puppet
   newtype(:oracle_exec) do
     include EasyType
     include ::Utils::OracleAccess
+    extend Utils::TitleParser
 
     desc "This resource allows you to execute any sql command in a database"
 
-
-
-   def self.title_patterns
-      # require 'ruby-debug'
-      # debugger
-      [
-        [
-          /^((.*))$/,
-          [
-            [ :statement      , nil     ],
-            [ :name           , nil      ],
-          ]
-        ],
-      ]
-    end
+    map_title_to_sid(:statement) { /^((.*\/)?(.*)?)$/}
 
     parameter :name
+    parameter :statement
+    parameter :sid
+
     parameter :timeout
     parameter :logoutput
     parameter :password
     parameter :username
-    property  :statement
 
   end
 

@@ -8,7 +8,7 @@ Puppet::Type.type(:oracle_exec).provide(:sqlplus) do
   mk_resource_methods
 
   def flush
-    output = sql statement, :username => resource.username, :password => resource.password
+    output = sql statement, :username => resource.username, :password => resource.password, :sid => resource.sid
     send_log(:info, output) if resource.logoutput == :true
   end
 

@@ -1,4 +1,4 @@
-newparam(:name) do
+newparam(:parameter_name) do
   include EasyType
   include EasyType::Validators::Name
   include EasyType::Mungers::Upcase
@@ -6,12 +6,9 @@ newparam(:name) do
 
   isnamevar
 
-
   to_translate_to_resource do | raw_resource|
-    sid = raw_resource.column_data('SID').upcase
-    parameter_name = raw_resource.column_data('NAME').upcase 
-    "#{sid}/#{parameter_name}"
-	end
+    raw_resource.column_data('NAME').upcase
+  end
 
 end
 

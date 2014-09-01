@@ -1,4 +1,4 @@
-newparam(:name) do
+newparam(:username) do
   include EasyType
   include EasyType::Validators::Name
   include EasyType::Mungers::Upcase
@@ -8,9 +8,7 @@ newparam(:name) do
   isnamevar
 
   to_translate_to_resource do | raw_resource|
-    sid = raw_resource.column_data('SID').upcase
-    username = raw_resource.column_data('USERNAME').upcase 
-    "#{sid}/#{username}"
+    raw_resource.column_data('USERNAME').upcase 
   end
 
 
