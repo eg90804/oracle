@@ -11,7 +11,7 @@ newproperty(:user_id) do
   end
 
   on_apply do | command_builder|
-    "set user_id = #{user_id}"
+    "set user_id = #{resource[:user_id]}"
   end
 
 

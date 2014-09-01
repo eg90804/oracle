@@ -11,8 +11,6 @@ module Utils
       parent.extend(OracleAccess)
     end
 
-
-
     ##
     #
     # Use this function to execute Oracle statements

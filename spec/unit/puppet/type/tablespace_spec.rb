@@ -10,22 +10,23 @@ describe tablespace do
   let(:attribute) {@resource.property(attribute_name)}
 
 
-  before :each do
+  before(:each) do
     @class = tablespace
     @provider = double 'provider'
     allow(@provider).to receive(:name).and_return(:simple)
-    allow(Puppet::Type::Tablespace).to receive(:defaultprovider).and_return @provider
+    allow(@class).to receive(:defaultprovider).and_return @provider
+    class Puppet::Type::Tablespace; def self.oratab; [:sid => 'TEST']; end; end
     @resource = @class.new({:name  => 'PII_DATA'})
   end
 
 
-  it 'should have :name be its namevar' do
-    @class.key_attributes.should == [:name]
+  it 'should have :name and :tablespace_name as its namevar' do
+    expect(@class.key_attributes).to eq([:name, :tablespace_name])
   end
 
-  describe ':name' do
+  describe ':tablespace_name' do
 
-    let(:attribute_class) { @class.attrclass(:name) }
+    let(:attribute_class) { @class.attrclass(:tablespace_name) }
 
     it 'should pick its value from element TABLESPACE_NAME' do
       raw_resource = InstancesResults['TABLESPACE_NAME','MY_NAME']
@@ -38,21 +39,21 @@ describe tablespace do
     end
 
     it 'should accept a name' do
-      @resource[:name] = 'PII_DATA'
-      expect(@resource[:name]).to eq 'PII_DATA'
+      @resource[:tablespace_name] = 'PII_DATA'
+      expect(@resource[:tablespace_name]).to eq 'PII_DATA'
     end
 
     it 'should munge to uppercase' do
-      @resource[:name] = 'system'
-      expect(@resource[:name]).to eq 'SYSTEM'
+      @resource[:tablespace_name] = 'system'
+      expect(@resource[:tablespace_name]).to eq 'SYSTEM'
     end
 
     it 'should not accept a name with whitespace' do
-      lambda { @resource[:name] = 'a a' }.should raise_error(Puppet::Error)
+      expect { @resource[:tablespace_name] = 'a a' }.to raise_error(Puppet::Error)
     end
 
     it 'should not accept an empty name' do
-      lambda { @resource[:name] = '' }.should raise_error(Puppet::Error)
+      expect { @resource[:tablespace_name] = '' }.to raise_error(Puppet::Error)
     end
   end
 
@@ -123,15 +124,15 @@ describe tablespace do
 
 
       it 'should not accept true' do
-        lambda { @resource[:logging] = 'true' }.should raise_error(Puppet::Error)
+        expect { @resource[:logging] = 'true' }.to raise_error(Puppet::Error)
       end
 
       it 'should not accept false' do
-        lambda { @resource[:logging] = 'false' }.should raise_error(Puppet::Error)
+        expect { @resource[:logging] = 'false' }.to raise_error(Puppet::Error)
       end
 
       it 'should not accept any other string then yes or no' do
-        lambda { @resource[:logging] = 'hdjhdh' }.should raise_error(Puppet::Error)
+        expect { @resource[:logging] = 'hdjhdh' }.to raise_error(Puppet::Error)
       end
     end
 
@@ -140,7 +141,7 @@ describe tablespace do
   describe ':timeout' do
 
     it 'should have :timeout attribute' do
-      @class.parameters.should include(:timeout)
+      expect(@class.parameters).to include(:timeout)
     end
   end
 

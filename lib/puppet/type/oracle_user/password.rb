@@ -9,7 +9,7 @@ newparam(:password) do
   end
 
   on_apply do | command_builder|
-    "identified by #{password}"
+    "identified by #{resource[:password]}"
   end
 
 end
