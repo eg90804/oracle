@@ -55,16 +55,17 @@ module Puppet
     property  :extent_management
     property  :segment_space_management
     property  :logging
-
+    property  :contents
 
     def ts_type
-      if self['bigfile'] == :yes
-        'bigfile'
-      else
-        'smallfile'
+      case self['contents']
+        when :permanent, nil
+          (self['bigfile'] == :yes) ? 'bigfile' : 'smallfile'
+        when :temporary, :undo
+          self['contents']
+        else fail "Internal error unknown contents type detected."
       end
     end
-
 
   end
 end
