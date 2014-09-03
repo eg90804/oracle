@@ -26,18 +26,15 @@ module Puppet
       base_command = "create #{ts_type} tablespace \"#{tablespace_name}\""
       base_command << " segment space management #{segment_space_management}" if segment_space_management
       base_command
-      command_builder.add(base_command)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(base_command, :sid => sid)
     end
 
     on_modify do | command_builder |
-      command_builder.add("alter tablespace \"#{tablespace_name}\"")
-      execute_on_sid( sid, command_builder)
+      command_builder.add("alter tablespace \"#{tablespace_name}\"", :sid => sid)
     end
 
     on_destroy do | command_builder |
-      command_builder.add("drop tablespace \"#{tablespace_name}\" including contents and datafiles")
-      execute_on_sid( sid, command_builder)
+      command_builder.add("drop tablespace \"#{tablespace_name}\" including contents and datafiles", :sid => sid)
     end
 
     map_title_to_sid(:tablespace_name) { /^((.*?\/)?(.*)?)$/}

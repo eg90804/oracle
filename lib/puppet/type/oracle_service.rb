@@ -29,8 +29,7 @@ module Puppet
       sql "exec dbms_service.create_service('#{service_name}', '#{service_name}'); dbms_service.start_service('#{service_name}')", sid
       new_services = current_services << name
       statement = set_services_command(new_services)
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     on_modify do
@@ -41,8 +40,7 @@ module Puppet
       sql  "exec dbms_service.stop_service('#{service_name}'); dbms_service.delete_service('#{service_name}')"
       new_services = current_services.delete_if {|e| e == name }
       statement = set_services_command(new_services)
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     map_title_to_sid(:service_name) { /^((.*?\/)?(.*)?)$/}

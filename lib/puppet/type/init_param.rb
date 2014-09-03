@@ -19,20 +19,17 @@ module Puppet
 
     on_create do | command_builder |
       statement = "alter system set \"#{parameter_name}\" = #{self[:value]} scope=spfile"
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     on_modify do | command_builder |
       statement = "alter system set \"#{parameter_name}\" = #{self[:value]} scope=spfile"
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     on_destroy do | command_builder |
       statement = "alter system reset \"#{parameter_name}\" scope=spfile"
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     to_get_raw_resources do

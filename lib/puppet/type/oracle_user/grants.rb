@@ -28,11 +28,12 @@ newproperty(:grants, :array_matching => :all) do
   end
 
   on_apply do | command_builder |
+    sid = resource[:sid]
     if command_builder.line == "alter user #{resource[:username]}"
       command_builder.line = ""
     end
-    command_builder.after(revoke(revoked_rights)) unless revoked_rights.empty?
-    command_builder.after(grants(granted_rights)) unless granted_rights.empty?
+    command_builder.after(revoke(revoked_rights), :sid => sid) unless revoked_rights.empty?
+    command_builder.after(grants(granted_rights), :sid => sid) unless granted_rights.empty?
     nil
   end
 

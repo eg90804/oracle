@@ -9,7 +9,7 @@ require 'utils/title_parser'
 module Puppet
   #
   # Create a new type oracle_user. Oracle user, works in conjunction 
-  # with the SqlResource provider
+  # with the §Resource provider
   #
   newtype(:oracle_user) do
     include EasyType
@@ -30,18 +30,15 @@ module Puppet
 
     on_create do | command_builder |
       statement = password ?  "create user #{username} identified by #{password}" : "create user #{username}"
-      command_builder.add(statement)
-      execute_on_sid( sid, command_builder)
+      command_builder.add(statement, :sid => sid)
     end
 
     on_modify do | command_builder |
-      command_builder.add("alter user #{username}")
-      execute_on_sid( sid, command_builder)
+      command_builder.add("alter user #{username}", :sid => sid)
     end
 
     on_destroy do | command_builder |
-      command_builder.add("drop user #{username}")
-      execute_on_sid( sid, command_builder)
+      command_builder.add("drop user #{username}", :sid => sid)
     end
 
     map_title_to_sid(:username) { /^((.*?\/)?(.*)?)$/}
@@ -51,7 +48,7 @@ module Puppet
     parameter :sid
 
     property  :user_id
-    property  :password
+    parameter :password
     property  :default_tablespace
     property  :temporary_tablespace
     property  :quotas
