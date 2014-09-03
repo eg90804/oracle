@@ -39,7 +39,7 @@ module Puppet
       sql_on_all_sids %q{select name, display_value from v$parameter } 
     end
 
-    map_title_to_sid(:parameter_name) { /^((.*\/)?(.*)?)$/}
+    map_title_to_sid(:parameter_name) { /^((.*?\/)?(.*)?)$/}
 
     parameter :name
     parameter :parameter_name

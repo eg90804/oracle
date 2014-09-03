@@ -40,7 +40,7 @@ module Puppet
       execute_on_sid( sid, command_builder)
     end
 
-    map_title_to_sid(:role_name) { /^((.*\/)?(.*)?)$/}
+    map_title_to_sid(:role_name) { /^((.*?\/)?(.*)?)$/}
 
     parameter :name
     parameter :role_name
