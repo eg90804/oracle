@@ -15,7 +15,7 @@ describe init_param do
     @provider = double 'provider'
     allow(@provider).to receive(:name).and_return(:simple)
     allow(@class).to receive(:defaultprovider).and_return @provider
-    class Puppet::Type::Init_param; def self.oratab; [:sid => 'TEST']; end; end
+    class Puppet::Type::Init_param; def self.default_sid; 'TEST'; end; end
     @resource = @class.new({:name  => 'MEMORY_TARGET'})
   end
 

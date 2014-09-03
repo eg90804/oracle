@@ -15,7 +15,7 @@ describe oracle_exec do
     @provider = double 'provider'
     allow(@provider).to receive(:name).and_return(:sqlplus)
     allow(Puppet::Type::Oracle_exec).to receive(:defaultprovider).and_return @provider
-    class Puppet::Type::Oracle_exec; def self.oratab; [:sid => 'TEST']; end; end
+    class Puppet::Type::Oracle_exec; def self.default_sid; 'TEST'; end; end
     @resource = @class.new({:title  => 'show_all'})
   end
 

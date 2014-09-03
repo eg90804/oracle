@@ -19,6 +19,11 @@ module Utils
       all_attributes = base_attributes + attributes
       map_title_to_attributes(*all_attributes, &proc)
     end
+
+    def default_sid
+      oratab = OraTab.new
+      oratab.default_sid
+    end
   end
 end
 

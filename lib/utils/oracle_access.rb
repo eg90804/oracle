@@ -1,11 +1,10 @@
 require 'tempfile'
 require 'fileutils'
 require 'utils/ora_daemon'
+require 'utils/ora_tab'
 
 module Utils
   module OracleAccess
-
-    ORATAB = "/etc/oratab"
 
     def self.included(parent)
       parent.extend(OracleAccess)
@@ -22,7 +21,8 @@ module Utils
       username = parameters.fetch(:username) { 'sysdba'}
       password = parameters[:password] # nil is allowed
       results = []
-      sids.each do |sid|
+      oratab = OraTab.new
+      oratab.running_database_sids.each do |sid|
         results = results + sql(command, {:sid => sid}.merge(parameters))
       end
       results
@@ -45,31 +45,9 @@ module Utils
       add_sid_to(convert_csv_data_to_hash(csv_string, [], :converters=> lambda {|f| f ? f.strip : nil}),sid)
     end
 
-    private
-
-    def oratab
-      values = []
-      fail "/etc/oratab not found. Probably Oracle not installed" unless File.exists?(ORATAB)
-      File.open(ORATAB) do | oratab|
-        oratab.each_line do | line|
-          content = [:sid, :home, :start].zip(line.split(':'))
-          values << Hash[content] unless comment?(line)
-        end
-      end
-      values
-    end
-
     def execute_on_sid(sid, command_builder)
       command_builder.options.merge!(:sid => sid)
       nil
-    end
-
-    def default_sid
-      oratab.first[:sid]
-    end
-
-    def sids
-      oratab.collect{|i| i[:sid]}
     end
 
     def execute_sql(command, parameters)
@@ -89,10 +67,6 @@ module Utils
       File.read(outFile.path)
     end
 
-    def comment?(line)
-      line.start_with?('#') || line.start_with?("\n")
-    end
-
 
     def add_sid_to(elements, sid)
       elements.collect{|e| e['SID'] = sid; e}
@@ -106,8 +80,6 @@ module Utils
         nil
       end
     end
-
-
 
   end
 end
