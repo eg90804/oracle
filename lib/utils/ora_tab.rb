@@ -46,7 +46,7 @@ module Utils
 	  end
 
 	  def default_sid
-	    database_sids.first[:sid]
+	    database_sids.first
 	  end
 
 	  private
