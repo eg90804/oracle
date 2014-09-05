@@ -9,6 +9,7 @@ Puppet::Type.type(:oracle_exec).provide(:sqlplus) do
   mk_resource_methods
 
   def flush
+    statement = resource.to_hash[:statement]
     if is_script?(statement)
       script_name = statement.sub('@','')
       statement = template(script_name, binding)

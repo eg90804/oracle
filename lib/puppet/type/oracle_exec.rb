@@ -21,7 +21,7 @@ module Puppet
     map_title_to_sid(:statement) { /^((.*?\/)?(.*)?)$/}
 
     parameter :name
-    parameter :statement
+    property  :statement
     parameter :sid
 
     parameter :timeout
