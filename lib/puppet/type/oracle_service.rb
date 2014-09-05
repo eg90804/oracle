@@ -27,7 +27,7 @@ module Puppet
 
     on_create do | command_builder |
       sql "exec dbms_service.create_service('#{service_name}', '#{service_name}'); dbms_service.start_service('#{service_name}')", :sid => sid
-      new_services = current_services << name
+      new_services = current_services << service_name
       statement = set_services_command(new_services)
       command_builder.add(statement, :sid => sid)
     end
@@ -38,7 +38,7 @@ module Puppet
 
     on_destroy do | command_builder |
       sql  "exec dbms_service.stop_service('#{service_name}'); dbms_service.delete_service('#{service_name}')", :sid => sid
-      new_services = current_services.delete_if {|e| e == name }
+      new_services = current_services.delete_if {|e| e == service_name }
       statement = set_services_command(new_services)
       command_builder.add(statement, :sid => sid)
     end
