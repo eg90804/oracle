@@ -25,19 +25,19 @@ module Puppet
       sql_on_all_sids "select name from dba_services"
     end
 
-    on_create do
+    on_create do | command_builder |
       sql "exec dbms_service.create_service('#{service_name}', '#{service_name}'); dbms_service.start_service('#{service_name}')", :sid => sid
       new_services = current_services << name
       statement = set_services_command(new_services)
       command_builder.add(statement, :sid => sid)
     end
 
-    on_modify do
+    on_modify do | command_builder |
       fail "It shouldn't be possible to modify a service"
     end
 
-    on_destroy do
-      sql  "exec dbms_service.stop_service('#{service_name}'); dbms_service.delete_service('#{service_name}')"
+    on_destroy do | command_builder |
+      sql  "exec dbms_service.stop_service('#{service_name}'); dbms_service.delete_service('#{service_name}')", :sid => sid
       new_services = current_services.delete_if {|e| e == name }
       statement = set_services_command(new_services)
       command_builder.add(statement, :sid => sid)
