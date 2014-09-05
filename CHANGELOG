@@ -1,8 +1,9 @@
 History
 ========
 
-01-09-2014  version 0.3.0
+05-09-2014  version 0.3.0
 --------------------------
-Added support for multiple SID's
+- Added support for multiple SID's. 
+- The listener now needs a sid as title. This is potential incompatible with previous versions where the name could be anything. 
 
 Before this, history not realy recorded. Look at git history for details
