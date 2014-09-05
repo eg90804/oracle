@@ -26,7 +26,7 @@ module Puppet
     end
 
     on_create do
-      sql "exec dbms_service.create_service('#{service_name}', '#{service_name}'); dbms_service.start_service('#{service_name}')", sid
+      sql "exec dbms_service.create_service('#{service_name}', '#{service_name}'); dbms_service.start_service('#{service_name}')", :sid => sid
       new_services = current_services << name
       statement = set_services_command(new_services)
       command_builder.add(statement, :sid => sid)
