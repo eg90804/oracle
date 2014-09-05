@@ -23,6 +23,8 @@ module Utils
     def default_sid
       oratab = OraTab.new
       oratab.default_sid
+    rescue
+      ''
     end
   end
 end
