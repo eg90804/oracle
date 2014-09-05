@@ -2,8 +2,8 @@ require 'pathname'
 $:.unshift(Pathname.new(__FILE__).dirname.parent.parent)
 $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_type' + 'lib')
 require 'easy_type'
-require 'utils/oracle_access'
-require 'utils/title_parser'
+require 'ora_utils/oracle_access'
+require 'ora_utils/title_parser'
 
 module Puppet
   #
@@ -12,8 +12,8 @@ module Puppet
   #
   newtype(:role) do
     include EasyType
-    include ::Utils::OracleAccess
-    extend ::Utils::TitleParser
+    include ::OraUtils::OracleAccess
+    extend ::OraUtils::TitleParser
 
     desc "This resource allows you to manage a role in an Oracle database."
 

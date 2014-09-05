@@ -1,8 +1,8 @@
-require 'utils/oracle_access'
+require 'ora_utils/oracle_access'
 require 'easy_type/helpers'
 
 Puppet::Type.type(:oracle_exec).provide(:sqlplus) do
-  include Utils::OracleAccess
+  include OraUtils::OracleAccess
   include EasyType::Helpers
   include EasyType::Template
 

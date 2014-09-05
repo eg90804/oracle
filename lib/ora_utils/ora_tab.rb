@@ -1,4 +1,4 @@
-module Utils
+module OraUtils
 	class OraTab
 
 		DEFAULT_FILE		= "/etc/oratab"

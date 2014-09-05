@@ -1,6 +1,6 @@
-require 'utils/oracle_access'
+require 'ora_utils/oracle_access'
 
-module Utils
+module OraUtils
   module TitleParser
     include OracleAccess
 

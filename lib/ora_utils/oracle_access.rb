@@ -1,9 +1,9 @@
 require 'tempfile'
 require 'fileutils'
-require 'utils/ora_daemon'
-require 'utils/ora_tab'
+require 'ora_utils/ora_daemon'
+require 'ora_utils/ora_tab'
 
-module Utils
+module OraUtils
   module OracleAccess
 
     def self.included(parent)

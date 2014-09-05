@@ -1,7 +1,7 @@
-require 'utils/oracle_access'
+require 'ora_utils/oracle_access'
 
 Puppet::Type.type(:listener).provide(:listener) do
-  include Utils::OracleAccess
+  include OraUtils::OracleAccess
 
   def self.instances
     []
