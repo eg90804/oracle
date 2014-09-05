@@ -5,8 +5,6 @@ newproperty(:contents) do
 
   newvalues(:permanent, :temporary, :undo)
 
-  defaultto(:permanent)
-
   to_translate_to_resource do | raw_resource|
     value = raw_resource.column_data('CONTENTS').downcase.to_sym
     if value == :permanent

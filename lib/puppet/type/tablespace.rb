@@ -23,7 +23,7 @@ module Puppet
     end
 
     on_create do | command_builder |
-      base_command = "create #{ts_type} tablespace \"#{tablespace_name}\""
+      base_command = "create #{contents} #{ts_type} tablespace \"#{tablespace_name}\""
       base_command << " segment space management #{segment_space_management}" if segment_space_management
       base_command
       command_builder.add(base_command, :sid => sid)
@@ -58,13 +58,7 @@ module Puppet
     property  :contents
 
     def ts_type
-      case self['contents']
-        when :permanent, nil
-          (self['bigfile'] == :yes) ? 'bigfile' : 'smallfile'
-        when :temporary, :undo
-          self['contents']
-        else fail "Internal error unknown contents type detected."
-      end
+      (self['bigfile'] == :yes) ? 'bigfile' : 'smallfile'
     end
 
   end
