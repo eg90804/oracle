@@ -8,7 +8,7 @@ newproperty(:grants, :array_matching => :all) do
   to_translate_to_resource do | raw_resource|
     @all_rights ||= privileges + granted_roles
     user        = raw_resource.column_data('USERNAME').upcase
-    sid         = raw_resource.column_data('SID').upcase
+    sid         = raw_resource.column_data('SID')
     rights_for_user(user, sid)
   end
 
