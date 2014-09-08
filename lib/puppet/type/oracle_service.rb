@@ -56,7 +56,7 @@ module Puppet
       end
 
       def current_services
-        provider.class.instances.map(&:name)
+        provider.class.instances.map(&:service_name)
       end
 
   end
