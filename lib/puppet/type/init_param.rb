@@ -33,7 +33,7 @@ module Puppet
     end
 
     to_get_raw_resources do
-      sql_on_all_sids %q{select name, display_value from v$parameter } 
+      sql_on_all_sids %q{select #{columns} from #{parameter_view} } 
     end
 
     map_title_to_sid(:parameter_name) { /^((.*?\/)?(.*)?)$/}
@@ -43,6 +43,20 @@ module Puppet
     parameter :sid
 
     property  :value
+    parameter :for_instance
 
+    private
+
+    def columns
+      instance_specfified? ? 'name, display_value, inst_id' : 'name, display_value'
+    end
+
+    def parameter_view
+      instance_specfified? ? 'GV$PARAMETER' : 'V$PARAMETER'
+    end
+
+    def instance_specfified?
+      self[:for_instance] 
+    end
   end
 end

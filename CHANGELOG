@@ -1,9 +1,11 @@
 History
 ========
 
-05-09-2014  version 0.3.0
+
+08-09-2014  version 0.3.0
 --------------------------
 - Added support for multiple SID's. 
 - The listener now needs a sid as title. This is potential incompatible with previous versions where the name could be anything. 
+- Added support for specifying the SID for init_param
 
 Before this, history not realy recorded. Look at git history for details
