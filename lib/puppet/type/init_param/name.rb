@@ -9,8 +9,9 @@ newparam(:name) do
 
   to_translate_to_resource do | raw_resource|
     sid = raw_resource.column_data('SID').upcase
+    instance = raw_resource.column_data('INSTANCE_NAME').upcase
     parameter_name = raw_resource.column_data('NAME').upcase 
-    "#{sid}/#{parameter_name}"
+    "#{sid}/#{instance}/#{parameter_name}"
 	end
 
 end
