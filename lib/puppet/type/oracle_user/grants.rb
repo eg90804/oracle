@@ -28,7 +28,7 @@ newproperty(:grants, :array_matching => :all) do
   end
 
   on_apply do | command_builder |
-    sid = resource[:sid]
+    sid = sid_from_resource
     if command_builder.line == "alter user #{resource[:username]}"
       command_builder.line = ""
     end

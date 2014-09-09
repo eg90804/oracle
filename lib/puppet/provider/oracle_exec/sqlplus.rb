@@ -1,5 +1,7 @@
 require 'ora_utils/oracle_access'
 require 'easy_type/helpers'
+require 'ora_utils/ora_tab'
+
 
 Puppet::Type.type(:oracle_exec).provide(:sqlplus) do
   include OraUtils::OracleAccess
@@ -14,7 +16,8 @@ Puppet::Type.type(:oracle_exec).provide(:sqlplus) do
       script_name = statement.sub('@','')
       statement = template(script_name, binding)
     end
-    output = sql statement, :username => resource.username, :password => resource.password, :sid => resource.sid
+    sid = sid_from_resource
+    output = sql statement, :username => resource.username, :password => resource.password, :sid => sid
     Puppet.info(output) if resource.logoutput == :true
   end
 

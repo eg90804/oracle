@@ -81,5 +81,11 @@ module OraUtils
       end
     end
 
+    def sid_from_resource
+      oratab = OraUtils::OraTab.new
+      resource.sid.empty? ? oratab.default_sid : resource.sid
+    end
+
+
   end
 end
