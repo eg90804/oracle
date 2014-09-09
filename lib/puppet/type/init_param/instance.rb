@@ -12,6 +12,9 @@ newparam(:instance) do
     raw_resource.column_data('INSTANCE_NAME').upcase
   end
 
+<<<<<<< Updated upstream:lib/puppet/type/init_param/instance.rb
 
+=======
+>>>>>>> Stashed changes:lib/puppet/type/init_param/for_instance.rb
 end
 
