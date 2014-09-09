@@ -21,7 +21,7 @@ describe init_param do
 
 
   it 'should have :name and :parameter_name be its namevar' do
-    expect(@class.key_attributes).to eq([:name, :parameter_name])
+    expect(@class.key_attributes).to eq([:name, :parameter_name, :instance])
   end
 
   describe ':paremeter_name' do
@@ -30,7 +30,7 @@ describe init_param do
 
   	it 'should pick its value from element NAME' do
   		raw_resource = InstancesResults['NAME','memory_target']
-  		expect(attribute_class.translate_to_resource(raw_resource)).to eq 'MEMORY_TARGET'
+  		expect(attribute_class.translate_to_resource(raw_resource)).to eq 'memory_target'
   	end
 
   	it 'should raise an error when name not found in raw_results' do
@@ -40,7 +40,7 @@ describe init_param do
 
     it 'should munge to uppercase' do
       @resource[:parameter_name] = 'sga_target'
-      expect(@resource[:parameter_name]).to eq 'SGA_TARGET'
+      expect(@resource[:parameter_name]).to eq 'sga_target'
     end
 
     it 'should not accept a name with whitespace' do

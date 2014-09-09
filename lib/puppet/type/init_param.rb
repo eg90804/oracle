@@ -17,46 +17,55 @@ module Puppet
 
     ensurable
 
-    on_create do | command_builder |
-      statement = "alter system set \"#{parameter_name}\" = #{self[:value]} scope=spfile"
+    def apply(command_builder)
+      statement = "alter system set \"#{parameter_name}\" = #{self[:value]} scope=#{scope} sid='#{instance}'"
       command_builder.add(statement, :sid => sid)
+    end
+
+
+    on_create do | command_builder |
+      apply(command_builder)
     end
 
     on_modify do | command_builder |
-      statement = "alter system set \"#{parameter_name}\" = #{self[:value]} scope=spfile"
-      command_builder.add(statement, :sid => sid)
+      apply(command_builder)
     end
 
     on_destroy do | command_builder |
-      statement = "alter system reset \"#{parameter_name}\" scope=spfile"
+      statement = "alter system reset \"#{parameter_name}\" scope=#{scope} sid='#{instance}'"
       command_builder.add(statement, :sid => sid)
     end
 
     to_get_raw_resources do
-      sql_on_all_sids %q{select #{columns} from #{parameter_view} } 
+      specfied_parameters
     end
 
-    map_title_to_sid(:parameter_name) { /^((.*?\/)?(.*)?)$/}
+
+    def self.parse_instance_title
+      @@instance_parser ||= lambda { |instance_name| instance_name.nil? ? '*' : instance_name[0..-2]}
+    end
+
+
+    map_title_to_sid([:instance, parse_instance_title], :parameter_name) { /^((.*?\/)?(.*?\/)?(.*)?)$/}
 
     parameter :name
     parameter :parameter_name
     parameter :sid
+    parameter :instance
 
     property  :value
-    parameter :for_instance
+    parameter :scope
+
 
     private
 
-    def columns
-      instance_specfified? ? 'name, display_value, inst_id' : 'name, display_value'
+    def self.specfied_parameters
+      all_parameters.select{|p| p['DISPLAY_VALUE'] != ''}
     end
 
-    def parameter_view
-      instance_specfified? ? 'GV$PARAMETER' : 'V$PARAMETER'
+    def self.all_parameters
+      sql_on_all_sids %q{select instance_name, name, display_value from gv$parameter, v$instance where gv$parameter.inst_id = v$instance.instance_number } 
     end
 
-    def instance_specfified?
-      self[:for_instance] 
-    end
   end
 end
