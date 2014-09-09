@@ -30,11 +30,11 @@ module Puppet
     end
 
     on_modify do | command_builder |
-      command_builder.add("alter role#{role_name}", :sid => sid)
+      command_builder.add("alter role# {role_name}", :sid => sid)
     end
 
     on_destroy do | command_builder |
-      command_builder.add("drop role#{role_name}", :sid => sid)
+      command_builder.add("drop role #{role_name}", :sid => sid)
     end
 
     map_title_to_sid(:role_name) { /^((.*?\/)?(.*)?)$/}
