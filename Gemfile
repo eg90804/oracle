@@ -16,8 +16,8 @@ group :development do
   gem 'pry-debugger'
   gem "travis"
   gem "travis-lint"
-  # gem "beaker"
-  # gem "beaker-rspec"
+  gem "beaker"
+  gem "beaker-rspec"
   gem "vagrant-wrapper"
   gem "puppet-blacksmith"
   gem "guard-rake"
