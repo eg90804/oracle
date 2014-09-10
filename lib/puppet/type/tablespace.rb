@@ -45,7 +45,7 @@ module Puppet
 
     parameter :timeout
     property  :bigfile
-    property  :datafile
+    parameter :datafile
     property  :size
     group(:autoextend_group) do
       property  :autoextend

@@ -1,4 +1,4 @@
-newproperty(:datafile) do
+newparam(:datafile) do
 
   include EasyType
   desc "The name of the datafile"
