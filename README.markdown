@@ -116,7 +116,7 @@ You can also create an undo tablespace:
 ```puppet
 tablespace {'sid/my_undots_1':
   ensure                    => present,
-  content                   => 'undo',
+  contents                  => 'undo',
 }
 ```
 
