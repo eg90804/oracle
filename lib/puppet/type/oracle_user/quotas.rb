@@ -23,11 +23,12 @@ newproperty(:quotas) do
     return_value
   end
 
+
   on_apply do | command_builder |
     all_quotas = value.collect do | tablespace, quota|
       "QUOTA #{quota} ON #{tablespace}"
     end
-    all_quotas.join(',')
+    all_quotas.join(' ')
   end
 
   private
