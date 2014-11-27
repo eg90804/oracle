@@ -2,20 +2,20 @@
 
 require 'spec_helper'
 
-init_param, = Puppet::Type.type(:ora_init_param)
+ora_init_param = Puppet::Type.type(:ora_init_param)
 
-describe init_param do
+describe ora_init_param do
 
   let(:attribute_class) {  @class.attrclass(attribute_name) }
   let(:attribute) {@resource.property(attribute_name)}
 
 
   before(:each) do
-    @class = init_param 
+    @class = ora_init_param 
     @provider = double 'provider'
     allow(@provider).to receive(:name).and_return(:simple)
     allow(@class).to receive(:defaultprovider).and_return @provider
-    class Puppet::Type::Init_param; def self.default_sid; 'TEST'; end; end
+    class Puppet::Type::Ora_init_param; def self.default_sid; 'TEST'; end; end
     @resource = @class.new({:name  => 'SPFILE/MEMORY_TARGET'})
   end
 

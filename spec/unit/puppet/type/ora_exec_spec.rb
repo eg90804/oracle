@@ -2,20 +2,20 @@
 
 require 'spec_helper'
 
-oracle_exec = Puppet::Type.type(:ora_exec)
+ora_exec = Puppet::Type.type(:ora_exec)
 
-describe oracle_exec do
+describe ora_exec do
 
   let(:attribute_class) {  @class.attrclass(attribute_name) }
   let(:attribute) {@resource.property(attribute_name)}
 
 
   before :each do
-    @class = oracle_exec
+    @class = ora_exec
     @provider = double 'provider'
     allow(@provider).to receive(:name).and_return(:sqlplus)
-    allow(Puppet::Type::Oracle_exec).to receive(:defaultprovider).and_return @provider
-    class Puppet::Type::Oracle_exec; def self.default_sid; 'TEST'; end; end
+    allow(Puppet::Type::Ora_exec).to receive(:defaultprovider).and_return @provider
+    class Puppet::Type::Ora_exec; def self.default_sid; 'TEST'; end; end
     @resource = @class.new({:title  => 'show_all'})
   end
 
