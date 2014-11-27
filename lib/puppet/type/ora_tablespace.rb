@@ -37,7 +37,7 @@ module Puppet
       command_builder.add("drop tablespace \"#{tablespace_name}\" including contents and datafiles", :sid => sid)
     end
 
-    map_title_to_sid(:tablespace_name) { /^((.*?\/)?(.*)?)$/}
+    map_title_to_sid(:tablespace_name) { /^((.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :tablespace_name

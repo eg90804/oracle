@@ -12,7 +12,7 @@ newparam(:name) do
   to_translate_to_resource do | raw_resource|
     sid = raw_resource.column_data('SID')
     role_name = raw_resource.column_data('ROLE').upcase 
-    "#{sid}/#{role_name}"
+    "#{role_name}@#{sid}"
 	end
 
 end

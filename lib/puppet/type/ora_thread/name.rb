@@ -12,7 +12,7 @@ newparam(:name) do
   to_translate_to_resource do | raw_resource|
     sid = raw_resource.column_data('SID')
     thread_no = raw_resource.column_data('THREAD#')
-    "#{sid}/#{thread_no}"
+    "#{thread_no}@#{sid}"
   end
 
 end

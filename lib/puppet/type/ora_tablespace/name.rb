@@ -8,7 +8,7 @@ newparam(:name) do
   to_translate_to_resource do | raw_resource|
     sid = raw_resource.column_data('SID')
     tablespace_name = raw_resource.column_data('TABLESPACE_NAME') 
-    "#{sid}/#{tablespace_name}"
+    "#{tablespace_name}@#{sid}"
   end
 
 end

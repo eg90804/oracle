@@ -18,7 +18,7 @@ module Puppet
 
     desc "This resource allows you to execute any sql command in a database"
 
-    map_title_to_sid(:statement) { /^((.*?\/)?(.*)?)$/}
+    map_title_to_sid(:statement) { /^((.*?)?(\@.*?)?)$/}
 
     parameter :name
     property  :statement

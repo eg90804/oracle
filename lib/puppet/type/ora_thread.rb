@@ -44,7 +44,7 @@ module Puppet
 
     property  :ensure
 
-    map_title_to_sid(:thread_number) { /^((.*?\/)?(.*)?)$/}
+    map_title_to_sid(:thread_number) { /^((.*?)?(\@.*?)?)$/}
 
     def new_state
       self[:ensure].to_s.chop
