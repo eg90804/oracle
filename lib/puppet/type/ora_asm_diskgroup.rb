@@ -47,7 +47,7 @@ module Puppet
     end
 
 
-    map_title_to_sid(:groupname) { /^((.*?)?(\@.*?)?)$/}
+    map_title_to_sid(:groupname) { /^((@?.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :groupname

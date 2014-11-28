@@ -41,7 +41,8 @@ module Puppet
       command_builder.add("drop user #{username}", :sid => sid)
     end
 
-    map_title_to_sid(:username) { /^((.*?)?(\@.*?)?)$/}
+
+    map_title_to_sid(:username) { /^((@?.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :username

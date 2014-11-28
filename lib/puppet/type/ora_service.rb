@@ -43,7 +43,7 @@ module Puppet
       command_builder.add(statement, :sid => sid)
     end
 
-    map_title_to_sid(:service_name) { /^((.*?)?(\@.*?)?)$/}
+    map_title_to_sid(:service_name) { /^((@?.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :service_name

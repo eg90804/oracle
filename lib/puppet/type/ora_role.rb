@@ -37,7 +37,7 @@ module Puppet
       command_builder.add("drop role #{role_name}", :sid => sid)
     end
 
-    map_title_to_sid(:role_name) { /^((.*?)?(\@.*?)?)$/}
+    map_title_to_sid(:role_name) { /^((@?.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :role_name
