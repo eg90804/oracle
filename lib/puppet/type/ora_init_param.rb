@@ -64,7 +64,7 @@ module Puppet
 
     def is_boolean?(value)
       case value
-      when 'TRUE','FALSE' ,'true' ,'false': return true
+      when 'TRUE','FALSE' ,'true' ,'false' then return true
       end
       !!value == value
     end
