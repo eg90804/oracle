@@ -15,7 +15,15 @@ module OraUtils
         result      = name.scan(/^((@?.*?)?(\@.*?)?)$/)
         groups      = result[0]
         sid         = parse_sid.call(groups.last)
-        object_name = groups[1].upcase
+        object_name = groups[1]
+        if object_name.include?('/') # It might contain an old style sid
+          Puppet.deprecation_warning("Using 'sid/name' in title is deprecated. Use 'name@sid'.") if object_name[0] == 65 #@
+          groups      = object_name.scan(/^(*.)\/(*.)$/)
+          require 'ruby-debug'
+          debugger
+          sid         = groups[0][0]
+          object_name = groups[0][2]
+        end
         "#{object_name}@#{sid}"
       end
     end
