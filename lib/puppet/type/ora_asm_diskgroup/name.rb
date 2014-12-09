@@ -12,7 +12,7 @@ newparam(:name) do
   to_translate_to_resource do | raw_resource|
     sid = raw_resource.column_data('SID')
     diskgroup_name = raw_resource.column_data('NAME').upcase
-    "#{sid}/#{diskgroup_name}"
+    "#{diskgroup_name}@#{sid}"
   end
 
 
