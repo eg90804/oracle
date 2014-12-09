@@ -14,6 +14,12 @@ newproperty(:size) do
       Puppet.notice "Current size is #{current_size}, requested size: #{value}. Oracle doesn't support downsizing small file tablespaces"
       return true
     end
+    if smallfile? and bigger?
+      return false
+    end
+    if smallfile? and equal?
+      return true
+    end
     if bigfile?
       is == should
     end
@@ -36,9 +42,16 @@ newproperty(:size) do
 
   private
 
-
   def smaller?
     current_size > value
+  end
+
+  def bigger?
+    current_size < value
+  end
+
+  def equal?
+    current_size == value
   end
 
   def current_size
