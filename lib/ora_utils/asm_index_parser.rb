@@ -35,6 +35,7 @@ module OraUtils
         next if empty_line
         next if parse_diskgroup
         next if parse_volume_name
+        next if parse_volume_device
         next if parse_size
         parse_mount_path
       end
@@ -55,6 +56,11 @@ module OraUtils
     def parse_volume_name
       volume_name = @line.scan(/Volume Name: (.*)/).flatten.first
       volume_name ? (@volume_name = volume_name; true) : false
+    end
+
+    def parse_volume_device
+      volume_device = @line.scan(/Volume Device: (.*)/).flatten.first
+      volume_device ? (@volume_device = volume_device; true) : false
     end
 
     def parse_size
@@ -80,11 +86,12 @@ module OraUtils
       mount_path = @line.scan(/Mountpath:(.*)?/).flatten.first
       if mount_path 
         row = EasyType::Helpers::InstancesResults[
-            'name',         "#{@diskgroup}:#{@volume_name}@+ASM1",
-            'SID',          '+ASM1',
-            'volume_name',  @volume_name,
-            'diskgroup',    @diskgroup, 
-            'size',         "#{@size}#{@units}"
+            'name',           "#{@diskgroup}:#{@volume_name}@+ASM1",
+            'SID',            '+ASM1',
+            'volume_name',    @volume_name,
+            'volume_device',  @volume_device, 
+            'diskgroup',      @diskgroup, 
+            'size',           "#{@size}#{@units}"
           ]
         @parsed_content << row
       end

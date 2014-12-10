@@ -46,9 +46,11 @@ module Puppet
     parameter :sid
     parameter :volume_name
 		parameter :diskgroup
+    parameter :volume_device
 
-		property :size
+		property  :size
     # -- end of attributes -- Leave this comment if you want to use the scaffolder
+
     #
   end
 end
