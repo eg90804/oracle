@@ -86,11 +86,11 @@ module Puppet
       lambda do |name|
         result    = name.scan(TITLE_PATTERN)
         groups    = result[0]
-        scope     = parse_scope.call(groups[1])
+        scope     = parse_scope.call(groups[1]).upcase
         parameter = groups[2].upcase
         for_sid   = parse_for_sid.call(groups[3])
         sid       = parse_sid.call(groups[4])
-        if scope == :MEMORY
+        if scope == 'MEMORY'
           "#{scope}/#{parameter}@#{sid}"
         else
           "#{scope}/#{parameter}:#{for_sid}@#{sid}"
@@ -111,8 +111,7 @@ module Puppet
     end
 
     def self.memory
-      []
-      # sql_on_all_sids %{select 'MEMORY' as scope, t.issys_modifiable, t.name, t.value, t.display_value, b.instance_name as for_sid from gv$parameter t, gv$instance b where t.inst_id = b.instance_number and t.issys_modifiable <> 'FALSE'}
+      sql_on_all_sids %{select 'MEMORY' as scope, t.issys_modifiable, t.name, t.value, t.display_value, b.instance_name as for_sid from gv$parameter t, gv$instance b where t.inst_id = b.instance_number and t.issys_modifiable <> 'FALSE'}
     end
 
     def self.spfile
