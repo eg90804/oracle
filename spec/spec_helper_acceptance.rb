@@ -31,11 +31,20 @@ RSpec.configure do |c|
   # Configure all nodes in nodeset
   c.before :suite do
     # Install module and dependencies
-    hosts.each do |host|
-      copy_module_to(host, :source => proj_root, :module_name => 'oracle')
-      # Required for mod_passenger tests.
-      on host, puppet('module', 'install', 'puppetlabs/stdlib'), { :acceptable_exit_codes => [0,1] }
-      on host, puppet('module', 'install', 'hajee/easy_type'), { :acceptable_exit_codes => [0,1] }
-    end
+
+    copy_module_to(master, :source => proj_root, :module_name => 'oracle')
+    # Required for mod_passenger tests.
+
+    on default, puppet('module', 'install', 'erwbgy/limits'), { :acceptable_exit_codes => [0,1] }
+    on default, puppet('module', 'install', 'fiddyspence/sysctl'), { :acceptable_exit_codes => [0,1] }
+    on default, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+    on default, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+    on default, puppet('module', 'install', 'hajee-easy_type'), { :acceptable_exit_codes => [0,1] }
+    on default, puppet('module', 'install', 'biemond-oradb'), { :acceptable_exit_codes => [0,1] }
+
+    scp_to default, "#{proj_root}/spec/software", '/software'
+    manifest = File.read("#{proj_root}/spec/acceptance/manifests/database.pp")
+    apply_manifest manifest, { :catch_failures => true }
+
   end
 end
