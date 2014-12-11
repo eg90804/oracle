@@ -39,7 +39,7 @@ module Puppet
     end
 
     parameter :name
-    property  :thread_number
+    parameter :thread_number
     parameter :sid
 
     property  :ensure
