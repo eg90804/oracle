@@ -30,7 +30,7 @@ describe oracle_service do
       :attribute          => :service_name,
       :result_identifier  => 'NAME',
       :raw_value          => 'PIF.infoplus.nl',
-      :test_value         => 'PIF.infoplus.nl'
+      :test_value         => 'PIF.INFOPLUS.NL'
     }
   end
 
