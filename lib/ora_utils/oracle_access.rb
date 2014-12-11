@@ -53,7 +53,7 @@ module OraUtils
     #
     def sql( command, parameters = {})
       sid = parameters.fetch(:sid) { fail "SID must be present"}
-      Puppet.info "Executing: #{command} on database #{sid}"
+      Puppet.debug "Executing: #{command} on database #{sid}"
       csv_string = execute_sql(command, parameters)
       add_sid_to(convert_csv_data_to_hash(csv_string, [], :converters=> lambda {|f| f ? f.strip : nil}),sid)
     end

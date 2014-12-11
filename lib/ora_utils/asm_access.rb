@@ -16,7 +16,7 @@ module OraUtils
     #
     #
     def asmcmd( command, parameters = {})
-      Puppet.info "Executing asmcmd command: #{command}"
+      Puppet.debug "Executing asmcmd command: #{command}"
       os_user = parameters.fetch(:os_user) { ENV['GRID_OS_USER'] || 'grid'}
       full_command = "export ORACLE_SID='+ASM1';export ORAENV_ASK=NO;. oraenv; asmcmd #{command}"
       options = {:uid => os_user, :failonfail => true}

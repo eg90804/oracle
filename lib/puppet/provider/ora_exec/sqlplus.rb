@@ -18,7 +18,7 @@ Puppet::Type.type(:ora_exec).provide(:sqlplus) do
     end
     sid = sid_from_resource
     output = sql statement, :username => resource.username, :password => resource.password, :sid => sid
-    Puppet.info(output) if resource.logoutput == :true
+    Puppet.debug(output) if resource.logoutput == :true
   end
 
   private
