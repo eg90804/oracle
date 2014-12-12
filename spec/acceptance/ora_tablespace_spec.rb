@@ -6,8 +6,30 @@ describe 'ora_tablespace' do
 
   it_behaves_like "an ensurable resource", {
     :resource_name      => 'ora_tablespace',
-    :present_manifest   => "ora_tablespace{test: ensure=>'present', logging=>'yes', size=> '5M'}",
-    :change_manifest    => "ora_tablespace{test: ensure=>'present', logging=>'no', size=> '5M'}",
-    :absent_manifest    => "ora_tablespace{test: ensure=>'absent'}",
+    :present_manifest   => <<-EOS,
+
+    ora_tablespace{test: 
+      ensure    =>'present',
+      datafile  => 'test.dbf', 
+      logging   =>'yes', 
+      size      => '5M',
+    }
+
+    EOS
+    :change_manifest   => <<-EOS,
+
+    ora_tablespace{test: 
+      ensure    =>'present',
+      datafile  => 'test.dbf', 
+      logging   =>'no', 
+      size      => '5M',
+    }
+
+    EOS
+    :absent_manifest    => <<-EOS,
+    ora_tablespace{test: 
+      ensure    =>'absent',
+    }
+    EOS
   }
 end

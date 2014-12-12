@@ -1,6 +1,6 @@
 newparam(:for_sid) do
   include EasyType
-  include EasyType::Validators::Name
+
   desc "The SID you want to set the parameter for"
 
   isnamevar

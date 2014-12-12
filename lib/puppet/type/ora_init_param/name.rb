@@ -4,6 +4,11 @@ newparam(:name) do
   include EasyType
   include EasyType::Validators::Name
 
+  def munge(value)
+    scope, parameter_name, for_sid, sid = value.scan(/^(.*?\/)?(.*?)(:.*?)?(\@.*?)?$/).flatten
+    "#{scope.upcase}#{parameter_name.upcase}#{for_sid}#{sid}"
+  end
+
   desc "The parameter name"
 
   isnamevar

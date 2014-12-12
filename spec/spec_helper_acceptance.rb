@@ -35,16 +35,24 @@ RSpec.configure do |c|
     copy_module_to(master, :source => proj_root, :module_name => 'oracle')
     # Required for mod_passenger tests.
 
-    on default, puppet('module', 'install', 'erwbgy/limits'), { :acceptable_exit_codes => [0,1] }
-    on default, puppet('module', 'install', 'fiddyspence/sysctl'), { :acceptable_exit_codes => [0,1] }
-    on default, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
-    on default, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
-    on default, puppet('module', 'install', 'hajee-easy_type'), { :acceptable_exit_codes => [0,1] }
-    on default, puppet('module', 'install', 'biemond-oradb'), { :acceptable_exit_codes => [0,1] }
 
-    scp_to default, "#{proj_root}/spec/software", '/software'
-    manifest = File.read("#{proj_root}/spec/acceptance/manifests/database.pp")
-    apply_manifest manifest, { :catch_failures => true }
+    unless ENV['BEAKER_provision'] == 'no'
+      modules = [
+        'erwbgy-limits',
+        'fiddyspence-sysctl',
+        'puppetlabs-stdlib',
+        'hajee-easy_type',
+        'biemond-oradb'
+      ]
+
+      modules.each do  |module_name |
+        on(default, puppet('module', 'install', module_name), :acceptable_exit_codes => [0,1] )
+      end
+
+      scp_to default, "#{proj_root}/spec/software", '/software'
+      manifest = File.read("#{proj_root}/spec/acceptance/manifests/database.pp")
+      apply_manifest manifest, { :catch_failures => true }
+    end
 
   end
 end

@@ -30,7 +30,7 @@ module Puppet
         specified_value = "'#{self[:value]}'"
       end
       statement = "alter system set #{parameter_name}=#{specified_value} scope=#{scope}"
-      statement+= " sid='#{for_sid}'" if scope == :SPFILE
+      statement+= " sid='#{for_sid}'" if scope == 'SPFILE'
       command_builder.add(statement, :sid => sid)
     end
 
@@ -87,7 +87,7 @@ module Puppet
         result    = name.scan(TITLE_PATTERN)
         groups    = result[0]
         scope     = parse_scope.call(groups[1]).upcase
-        parameter = groups[2].upcase
+        parameter = groups[2]
         for_sid   = parse_for_sid.call(groups[3])
         sid       = parse_sid.call(groups[4])
         if scope == 'MEMORY'
