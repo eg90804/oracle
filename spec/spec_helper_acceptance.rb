@@ -38,11 +38,11 @@ RSpec.configure do |c|
 
     unless ENV['BEAKER_provision'] == 'no'
       modules = [
+        'hajee-easy_type',
+        'biemond-oradb',
         'erwbgy-limits',
         'fiddyspence-sysctl',
         'puppetlabs-stdlib',
-        'hajee-easy_type',
-        'biemond-oradb'
       ]
 
       modules.each do  |module_name |

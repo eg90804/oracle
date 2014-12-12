@@ -66,6 +66,8 @@ module OraUtils
     def execute_sql(command, parameters)
       os_user = parameters.fetch(:os_user) { ENV['ORA_OS_USER'] || 'oracle'}
       db_sid = parameters.fetch(:sid) { raise ArgumentError, "No sid specified"}
+      oratab = OraUtils::OraTab.new
+      raise ArgumentError, "sid #{db_sid} doesn't exist on node" unless oratab.valid_sid?(db_sid) 
       username = parameters.fetch(:username) { 'sysdba'}
       password = parameters[:password] # null allowd
       daemon = OraDaemon.run(os_user, db_sid, username, password)
