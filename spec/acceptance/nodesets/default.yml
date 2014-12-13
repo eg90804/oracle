@@ -1,11 +1,9 @@
 HOSTS:
-  centos-511-x64:
+  centos-58-x64:
     roles:
       - master
     platform: el-5-x86_64
-    box : prorail/centos-5.8-x86_64
-    # box: puppetlabs/centos-5.11-64-nocm
-    # box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-5.11-64-nocm
+    box : hajee/centos-5.10-x86_64
     hypervisor: vagrant
 CONFIG:
   vagrant_memsize: 3072
