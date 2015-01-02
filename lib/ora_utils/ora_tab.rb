@@ -57,7 +57,7 @@ module OraUtils
 	  end
 
 	  def default_sid
-	    database_sids.first
+	    database_sids.first || ''
 	  end
 
 	  private
