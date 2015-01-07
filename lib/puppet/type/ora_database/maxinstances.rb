@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:maxinstances) do
+newparam(:maxinstances) do
   include EasyType
   include EasyType::Validators::Integer
   

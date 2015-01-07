@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:default_temporary_tablespace_extent_management) do
+newparam(:default_temporary_tablespace_extent_management) do
   include EasyType
 
   desc 'Use this setting to specify the extent management for temporary tablespaces.'

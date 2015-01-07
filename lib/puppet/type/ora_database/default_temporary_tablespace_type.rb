@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:default_temporary_tablespace_type) do
+newparam(:default_temporary_tablespace_type) do
   include EasyType
   
   newvalues(:bigfile, :smallfile)

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:logfile_groups, :array_matching => :all) do
+newparam(:logfile_groups, :array_matching => :all) do
   include EasyType
   
   desc 'One or more files to be used as redo log files.'

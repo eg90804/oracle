@@ -27,12 +27,12 @@ module Puppet
     to_get_raw_resources do
       oratab = OraUtils::OraTab.new
       sids = oratab.running_asm_sids
-      statement = template('puppet:///modules/oracle/diskgroup_index.sql', binding)
+      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/index.sql', binding)
       sql_on(sids, statement, :username => 'sysasm', :os_user => 'grid')
     end
 
     on_create do | command_builder |
-      statement = template('puppet:///modules/oracle/diskgroup_create.sql.erb', binding)
+      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/create.sql.erb', binding)
       command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => 'grid')
     end
 
@@ -42,7 +42,7 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      statement = template('puppet:///modules/oracle/diskgroup_destroy.sql.erb', binding)
+      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/destroy.sql.erb', binding)
       command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => 'grid')
     end
 

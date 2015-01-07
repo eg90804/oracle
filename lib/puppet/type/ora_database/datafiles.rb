@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:datafiles, :array_matching => :all) do
+newparam(:datafiles, :array_matching => :all) do
   include EasyType
   include EasyType::Mungers::Array
 

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:default_tablespace_name) do
+newparam(:default_tablespace_name) do
   include EasyType
   
   desc 'Give your desciption of the property'

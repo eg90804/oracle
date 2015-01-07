@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:undo_tablespaces_datafiles, :array_matching => :all) do
+newparam(:undo_tablespaces_datafiles, :array_matching => :all) do
   include EasyType
   include EasyType::Mungers::Array
 

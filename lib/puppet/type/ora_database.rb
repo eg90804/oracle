@@ -11,10 +11,20 @@ module Puppet
     include EasyType
     include ::OraUtils::OracleAccess
 
+    SCRIPTS = [
+      "Context.sql",
+      "CreateClustDBViews.sql",
+      "CreateDBCatalog.sql",
+      "Cwmlite.sql",
+      "Grants.sql",
+      "JServer.sql",
+      "LockAccount.sql",
+      "Psu.sql",
+      "Xdb_protocol.sql"]
 
     desc "This resource allows you to manage an Oracle Database."
 
-    set_command(:sql)
+    set_command([:sql, :remove_directories])
 
     ensurable
 
@@ -23,12 +33,18 @@ module Puppet
     end
 
     on_create do | command_builder |
-      create_directories
-      create_init_ora_file
-      add_oratab_entry
-
-      statement = template('puppet:///modules/oracle/create_database.sql.erb', binding)
-      command_builder.add(statement, :sid => name) 
+      begin
+        create_directories
+        create_init_ora_file
+        add_oratab_entry
+        create_ora_scripts(SCRIPTS)
+        statement = template('puppet:///modules/oracle/ora_database/create.sql.erb', binding)
+        command_builder.add(statement, :sid => name)
+      rescue
+        remove_directories
+        fail "Error creating database #{name}"
+        nil
+      end
     end
 
     on_modify do | command_builder |
@@ -36,12 +52,11 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      Puppet
-      statement = template('puppet:///modules/oracle/drop_database.sql.erb', binding)
-      FileUtils.rm_rf "#{oracle_base}/admin/#{name}"
-      FileUtils.rm_rf "#{oracle_home}/dbs/init#{name}.ora"
-      FileUtils.rm_rf "#{oracle_base}/cfgtoolslog/dbca/#{name}"
-      nil
+      require 'ruby-debug'
+      debugger
+      # statement = template('puppet:///modules/oracle/ora_database/destroy.sql.erb', binding)
+      # command_builder.add(statement, :sid => name)
+      command_builder.after(:remove_directories)
     end
 
     parameter :name
@@ -87,10 +102,16 @@ module Puppet
 		parameter :oracle_user
 		parameter :install_group
 		parameter :autostart
+    parameter :create_catalog
     # -- end of attributes -- Leave this comment if you want to use the scaffolder
 
-
     private
+
+    def remove_directories
+      FileUtils.rm_rf "#{oracle_base}/admin/#{name}"
+      FileUtils.rm_rf "#{oracle_home}/dbs/init#{name}.ora"
+      FileUtils.rm_rf "#{oracle_base}/cfgtoolslog/dbca/#{name}"
+    end
 
     def create_directories
       make_oracle_directory oracle_base
@@ -126,6 +147,22 @@ module Puppet
       Puppet.debug "Setting ownership for #{path}"
       FileUtils.chmod 0775, path
       FileUtils.chown oracle_user, install_group, path
+    end
+
+    def create_ora_scripts( scripts)
+      scripts.each {|s| create_ora_script(s)}
+      content = (scripts.collect {|s| "@#{oracle_base}/admin/#{name}/scripts/#{s}"}).join("\n")
+      path = "#{oracle_base}/admin/#{name}/scripts/all.sql"
+      File.open(path, 'w') { |f| f.write(content) }
+      ownened_by_oracle(path)
+    end
+
+    def create_ora_script( script)
+      Puppet.info "creating script #{script}"
+      content = template("puppet:///modules/oracle/ora_database/#{script}.erb", binding)
+      path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
+      File.open(path, 'w') { |f| f.write(content) }
+      ownened_by_oracle(path)
     end
 
     def init_ora_path

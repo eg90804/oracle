@@ -7,5 +7,5 @@ newparam(:init_ora_content) do
 end
 
 def init_ora_content
-  self[:init_ora_content] ? self[:init_ora_content] :  template('puppet:///modules/oracle/default_init_ora.erb', binding)
+  self[:init_ora_content] ? self[:init_ora_content] :  template('puppet:///modules/oracle/ora_database/default_init_ora.erb', binding)
 end

@@ -1,9 +1,9 @@
 # encoding: UTF-8
-newproperty(:extent_management) do
+newparam(:extent_management) do
   include EasyType
   desc 'Use this setting to create a locally managed SYSTEM tablespace'
 
-  newvalue(:local)  
+  newvalues(:local)  
 
   to_translate_to_resource do | raw_resource|
   #  raw_resource.column_data('extent_management')

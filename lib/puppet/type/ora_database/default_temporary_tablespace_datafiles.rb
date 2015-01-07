@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:default_temporary_tablespace_datafiles, :array_matching => :all) do
+newparam(:default_temporary_tablespace_datafiles, :array_matching => :all) do
   include EasyType
   include EasyType::Mungers::Array
 

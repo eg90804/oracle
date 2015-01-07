@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:maxlogmembers) do
+newparam(:maxlogmembers) do
   include EasyType
   include EasyType::Validators::Integer
   

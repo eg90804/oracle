@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:undo_tablespace_name) do
+newparam(:undo_tablespace_name) do
   include EasyType
   
   desc 'The name of the undo tablespace'

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:character_set) do
+newparam(:character_set) do
   include EasyType
 
   desc 'Specify the character set the database uses to store data. '

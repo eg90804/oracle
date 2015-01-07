@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:default_temporary_tablespace_name) do
+newparam(:default_temporary_tablespace_name) do
   include EasyType
   
   desc 'The name of the default temporary tablespace'

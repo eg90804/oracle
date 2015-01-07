@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:national_character_set) do
+newparam(:national_character_set) do
   include EasyType
 
   desc 'The national character set used to store data in columns'

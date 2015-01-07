@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:force_logging) do
+newparam(:force_logging) do
   include EasyType
 
   newvalues(:enabled, :disabled)

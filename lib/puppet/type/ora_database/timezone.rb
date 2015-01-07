@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:timezone) do
+newparam(:timezone) do
   include EasyType
   desc 'Set the time zone of the database.'
   

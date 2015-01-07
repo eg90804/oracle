@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:logfile) do
+newparam(:logfile) do
   include EasyType
   
   desc 'The file to be used as redo log file.'

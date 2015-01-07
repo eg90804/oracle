@@ -1,0 +1,80 @@
+shutdown abort
+startup nomount
+create database <%= name -%>
+<% if system_password -%>
+   user system identified by <%= system_password -%>
+<% end -%>
+<% if sys_password -%>
+   user sys identified by <%= system_password -%>
+<% end -%>
+<% if control_file -%>
+  controlfile  <%= control_file -%>
+<% end -%>
+<% if maxdatafiles -%>
+  maxdatafiles <%= maxdatafiles -%>
+<% end -%>
+<% if maxinstances -%>
+  maxinstances <%= maxdatafiles -%>
+<% end -%>
+<% if character_set -%>
+  character set <%= character_set -%>
+<% end -%>
+<% if national_character_set -%>
+  national character set <%= national_character_set -%>
+<% end -%>
+<% if tablespace_type -%>
+  set default <%= tablespace_type -%> tablespace
+<% end -%>
+<% if logfile -%>
+  logfile <%= logfile -%>
+<% end -%>
+<% if logfile_groups -%>
+  logfile group <%= logfile_groups.collect {|e| "#{e[0]} #{e[1]}"}.join(', ') -%>
+<% end -%>
+<% if maxlogfiles -%>
+  maxlogfiles <%= maxlogfiles -%>
+<% end -%>
+<% if maxlogmembers -%>
+  maxlogmembers <%= maxlogmembers -%>
+<% end -%>
+<% if maxloghistory -%>
+  maxloghistory <%= maxloghistory -%>
+<% end -%>
+<% if archivelog == :enabled%>
+  archivelog
+<% else -%>
+  noarchivelog
+<% end -%>
+<% if force_logging == :enabled%>
+  force logging 
+<% end -%>
+<% if extent_management -%>
+  extent management <%= extent_management -%>
+<% end -%>
+<% if datafiles -%>
+  datafile <%= datafiles.value.join(',') -%>
+<% end -%>
+<% if sysaux_datafiles -%>
+ sysaux datafile <%= sysaux_datafiles.join(',') -%>
+<% end -%>
+<% if default_tablespace_name -%>
+  default tablespace <%= default_tablespace_name -%>
+  <% if default_tablespaces_datafiles -%>
+    datafile <%= default_tablespaces_datafiles.join(',') -%>
+  <% end -%>
+<% end -%>
+<% if default_temporary_tablespace_name -%>
+  <%= default_temporary_tablespace_type -%> default temporary tablespace <%= default_temporary_tablespace_name -%>
+  <% if default_temporary_tablespace_datafiles -%>
+    tempfile <%= default_temporary_tablespace_datafiles.join(',') -%>
+  <% end -%>
+<% end -%>
+<% if undo_tablespace_name -%>
+  undo tablespace <%= undo_tablespace_name -%>
+  <% if undo_tablespaces_datafiles -%>
+    datafile <%= undo_tablespaces_datafiles.join(',') -%>
+  <% end %>
+<% end -%>
+<% if create_catalog? -%>
+  @<%= oracle_base -%>/admin/<%= name -%>/scripts/all.sql
+<% end -%>

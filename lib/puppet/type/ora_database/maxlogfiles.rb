@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:maxlogfiles) do
+newparam(:maxlogfiles) do
   include EasyType
   include EasyType::Validators::Integer
   

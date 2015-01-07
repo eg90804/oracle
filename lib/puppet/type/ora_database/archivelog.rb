@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:archivelog) do
+newparam(:archivelog) do
   include EasyType
 
   newvalues(:enabled, :disabled)

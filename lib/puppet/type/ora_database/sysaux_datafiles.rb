@@ -1,5 +1,5 @@
 # encoding: UTF-8
-newproperty(:sysaux_datafiles, :array_matching => :all) do
+newparam(:sysaux_datafiles, :array_matching => :all) do
   include EasyType
 
   desc 'Use this property if you are not using Oracle-managed files and you want to specify one or more datafiles for the SYSAUX tablespace.'
