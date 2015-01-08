@@ -7,6 +7,9 @@ require 'ora_utils/ora_tab'
 module OraUtils
   class Sql
 
+
+    OS_USER_NAME = 'ORA_OS_USER'
+
     VALID_OPTIONS = [
       :sid,
       :os_user,
@@ -18,7 +21,7 @@ module OraUtils
     def initialize(options = {})
       check_options(options)
       @sid         = options.fetch(:sid) { raise ArgumentError, "SID must be present"}
-      @os_user     = options.fetch(:os_user) { ENV['ORA_OS_USER'] || 'oracle'}
+      @os_user     = options.fetch(:os_user) { default_ora_user}
       @username    = options.fetch(:username) { 'sysdba'}
       @password    = options[:password] # null allowed
       @timeout     = options[:timeout]
@@ -60,6 +63,11 @@ module OraUtils
 
     def check_options(options)
       options.each_key {| key|  raise ArgumentError, "option #{key} invalid for sql" unless VALID_OPTIONS.include?(key)}
+    end
+
+
+    def default_ora_user
+      ENV[OS_USER_NAME] ||  Facter.value('OS_USER_NAME') || 'oracle'
     end
 
   end
