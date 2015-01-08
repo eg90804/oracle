@@ -4,6 +4,8 @@ newparam(:default_temporary_tablespace_type) do
   
   newvalues(:bigfile, :smallfile)
 
+  defaultto :smallfile
+
   desc 'Use this to set the type default temporary tablespace to create'
 
   to_translate_to_resource do | raw_resource|

@@ -19,7 +19,7 @@ class OraDirect
   end
 
   def execute_sql_command(command, output_file, timeout = DEFAULT_TIMEOUT)
-    Puppet.debug "Executing sql-command #{command}"
+    Puppet.debug "Executing direct sql-command #{command}"
     script = command_file( template('puppet:///modules/oracle/shared/direct_execute.sql.erb', binding))
     os_command  = "su - #{user} -c 'export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv;sqlplus -S /nolog @#{script}'"
     Puppet::Util::Execution.execute(os_command, :failonfail => true)

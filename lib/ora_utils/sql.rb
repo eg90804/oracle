@@ -6,13 +6,23 @@ require 'ora_utils/ora_tab'
 
 module OraUtils
   class Sql
+
+    VALID_OPTIONS = [
+      :sid,
+      :os_user,
+      :password,
+      :timeout,
+      :daemonized,
+    ]
+
     def initialize(options = {})
+      check_options(options)
       @sid         = options.fetch(:sid) { raise ArgumentError, "SID must be present"}
       @os_user     = options.fetch(:os_user) { ENV['ORA_OS_USER'] || 'oracle'}
       @username    = options.fetch(:username) { 'sysdba'}
       @password    = options[:password] # null allowed
       @timeout     = options[:timeout]
-      @daemonized  = options.fetch(:daemonized) { false}
+      @daemonized  = options.fetch(:daemonized) { true}  # Default use daemonized because it's faster
       if @daemonized
         @executor = OraDaemon.run(@os_user, @sid, @username, @password)
       else
@@ -46,6 +56,10 @@ module OraUtils
     def validate_sid
       oratab = OraUtils::OraTab.new
       raise ArgumentError, "sid #{@sid} doesn't exist on node" unless oratab.valid_sid?(@sid) 
+    end
+
+    def check_options(options)
+      options.each_key {| key|  raise ArgumentError, "option #{key} invalid for sql" unless VALID_OPTIONS.include?(key)}
     end
 
   end

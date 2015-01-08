@@ -1,4 +1,6 @@
+whenever sqlerror continue
 shutdown abort
+whenever sqlerror exit failure
 startup nomount
 create database <%= name -%>
 <% if system_password -%>
@@ -75,6 +77,4 @@ create database <%= name -%>
     datafile <%= undo_tablespaces_datafiles.join(',') -%>
   <% end %>
 <% end -%>
-<% if create_catalog? -%>
-  @<%= oracle_base -%>/admin/<%= name -%>/scripts/all.sql
-<% end -%>
+/

@@ -3,6 +3,8 @@ newparam(:default_temporary_tablespace_name) do
   include EasyType
   
   desc 'The name of the default temporary tablespace'
+
+  defaultto 'TEMP'
   
   to_translate_to_resource do | raw_resource|
   #  raw_resource.column_data('default_temporary_tablespace_name')

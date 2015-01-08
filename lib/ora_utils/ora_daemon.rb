@@ -28,7 +28,7 @@ class OraDaemon < EasyType::Daemon
   end
 
   def execute_sql_command(command, output_file, timeout = DEFAULT_TIMEOUT)
-    Puppet.debug "Executing sql-command #{command}"
+    Puppet.debug "Executing daemonized sql-command #{command}"
     connect_to_oracle
     execute_command template('puppet:///modules/oracle/shared/daemon_execute.sql.erb', binding)
     execute_command "prompt ~~~~COMMAND SUCCESFULL~~~~"
