@@ -16,6 +16,7 @@ module OraUtils
       :password,
       :timeout,
       :daemonized,
+      :username,
     ]
 
     def initialize(options = {})
