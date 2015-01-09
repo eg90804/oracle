@@ -28,12 +28,12 @@ module Puppet
       oratab = OraUtils::OraTab.new
       sids = oratab.running_asm_sids
       statement = template('puppet:///modules/oracle/ora_asm_diskgroup/index.sql', binding)
-      sql_on(sids, statement, :username => 'sysasm', :os_user => 'grid')
+      sql_on(sids, statement, :username => 'sysasm', :os_user => default_asm_user)
     end
 
     on_create do | command_builder |
       statement = template('puppet:///modules/oracle/ora_asm_diskgroup/create.sql.erb', binding)
-      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => 'grid')
+      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => default_asm_user)
     end
 
     on_modify do | command_builder |
@@ -43,7 +43,7 @@ module Puppet
 
     on_destroy do | command_builder |
       statement = template('puppet:///modules/oracle/ora_asm_diskgroup/destroy.sql.erb', binding)
-      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => 'grid')
+      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => default_asm_user)
     end
 
 
@@ -59,6 +59,14 @@ module Puppet
     property  :compat_asm
     property  :compat_rdbms
     property  :disks
+
+
+    private
+
+    def default_asm_user
+      ENV[OS_USER_NAME] ||  Facter.value(OS_USER_NAME) || 'grid'
+    end
+
 
   end
 end
