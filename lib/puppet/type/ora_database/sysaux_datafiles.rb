@@ -1,21 +1,37 @@
 # encoding: UTF-8
+require 'ora_utils/schemas'
+require 'utils/hash'
+
 newparam(:sysaux_datafiles, :array_matching => :all) do
-  include EasyType
+  class ::Puppet::Type::Ora_database::ParameterSysaux_datafiles
+    include EasyType
+    include EasyType::Mungers::Array
+    include OraUtils::Schemas
+    include Utils::Hash
 
-  desc 'Use this property if you are not using Oracle-managed files and you want to specify one or more datafiles for the SYSAUX tablespace.'
+    desc <<-EOD 
+    One or more files to be used as sysaux datafiles.
 
-  to_translate_to_resource do | raw_resource|
-  #  raw_resource.column_data('sysaux_datafiles')
+    Use this syntax to specify all attributes:
+
+      ora_database{'dbname':
+        ...
+        sysaux_datafiles       => [
+          {file_name   => 'sysaux1.dbs', size => '10G', reuse => true},
+          {file_name   => 'sysaux2.dbs', size => '10G', reuse => true},
+        ]
+      }
+    EOD
+
+    VALIDATION = OraUtils::Schemas::DATAFILE
+
+    def validate(value)
+      value.each {|v| ClassyHash.validate_strict(v, VALIDATION)}
+    end
+
+    def value
+      "sysaux datafile #{datafiles(@value)}" unless @value.empty?
+    end
+
   end
-
-  on_apply do | command_builder | 
-    "SYSAUX DATAFILE #{sysaux_datafiles_string}"
-  end
-
-  private
-
-  def sysaux_datafiles_string
-    value.join(',')
-  end
-    
 end

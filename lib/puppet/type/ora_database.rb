@@ -6,7 +6,6 @@ require 'ora_utils/oracle_access'
 require 'ora_utils/ora_tab'
 require 'ora_utils/directories'
 
-
 module Puppet
   newtype(:ora_database) do
     include EasyType
@@ -36,7 +35,7 @@ module Puppet
         create_init_ora_file
         add_oratab_entry
         create_ora_scripts(SCRIPTS)
-        statement = template('puppet:///modules/oracle/ora_database/create.sql.erb', binding)
+        statement = create_database_script
         command_builder.add(statement, :sid => name, :daemonized => false)
         if create_catalog?
           SCRIPTS.each do |script| 
@@ -67,47 +66,43 @@ module Puppet
     parameter :init_ora_content
     parameter :timeout
     parameter :control_file
-    property  :maxdatafiles
-    property  :maxinstances
-    property  :character_set
-    property  :national_character_set
-    property  :tablespace_type
-    property  :logfile
-    property  :logfile_groups
-    property  :maxlogfiles
-    property  :maxlogmembers
-    property  :maxloghistory
-    property  :archivelog
-    property  :force_logging
-    property  :extent_management
-    property  :datafiles
-    property  :sysaux_datafiles
-    group(:default_tablespace_group) do
-      property  :default_tablespace_type
-      property  :default_tablespace_name
-      property  :default_tablespace_datafiles
-      property  :default_tablespace_extent_management
-    end
-    group(:default_temporary_tablespace_group) do
-      property  :default_temporary_tablespace_type
-      property  :default_temporary_tablespace_name
-      property  :default_temporary_tablespace_datafiles
-      property  :default_temporary_tablespace_extent_management
-    end
-    group(:undo_tablespace_group) do
-      property  :undo_tablespace_type
-      property  :undo_tablespace_name
-      property  :undo_tablespace_datafiles
-    end
+    parameter :maxdatafiles
+    parameter :maxinstances
+    parameter :character_set
+    parameter :national_character_set
+    parameter :tablespace_type
+    parameter :logfile
+    parameter :logfile_groups
+    parameter :maxlogfiles
+    parameter :maxlogmembers
+    parameter :maxloghistory
+    parameter :archivelog
+    parameter :force_logging
+    parameter :extent_management
 		parameter :oracle_home
 		parameter :oracle_base
 		parameter :oracle_user
 		parameter :install_group
 		parameter :autostart
     parameter :create_catalog
+		parameter :default_tablespace
+    parameter :datafiles
+		parameter :default_temporary_tablespace
+		parameter :undo_tablespace
+		parameter :sysaux_datafiles
     # -- end of attributes -- Leave this comment if you want to use the scaffolder
 
     private
+
+    def create_database_script
+      script = 'create.sql'
+      Puppet.info "creating script #{script}"
+      content = template('puppet:///modules/oracle/ora_database/create.sql.erb', binding)
+      path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
+      File.open(path, 'w') { |f| f.write(content) }
+      ownened_by_oracle(path)
+      content
+    end
 
     def create_init_ora_file
       File.open(init_ora_path, 'w') { |f| f.write(init_ora_content) }
@@ -136,6 +131,6 @@ module Puppet
       "#{oracle_home}/dbs/init#{name}.ora"
     end
 
-
   end
 end
+

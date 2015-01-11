@@ -1,16 +1,24 @@
 # encoding: UTF-8
+require 'ora_utils/schemas'
+require 'utils/hash'
+
 newparam(:extent_management) do
-  include EasyType
-  desc 'Use this setting to create a locally managed SYSTEM tablespace'
+  class ::Puppet::Type::Ora_database::ParameterExtent_management
+    include EasyType
+    include OraUtils::Schemas
 
-  newvalues(:local)  
+    newvalues(:local)
 
-  to_translate_to_resource do | raw_resource|
-  #  raw_resource.column_data('extent_management')
-  end
+    desc <<-EOD 
+    Specify the extent management. 
 
-  on_apply do | command_builder | 
-    "extent management #{value}"
+    Use this syntax to specify all attributes:
+
+      ora_database{'dbname':
+        ...
+        extent_management => 'local'
+    EOD
+
   end
   
 end
