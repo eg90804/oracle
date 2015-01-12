@@ -1,6 +1,5 @@
 require 'pathname'
 require 'utils/classy_hash'
-require 'ruby-debug'
 
 module OraUtils
   module Schemas
