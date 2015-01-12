@@ -275,6 +275,70 @@ ora_database{'oradb':
   create_catalog  => 'no',
 }
 ```
+
+The `ora_database` type uses structured types for some of the parameters. Here is part of an example with some of these structured parameters filled in:
+
+
+```puppet
+ora_database{'bert':
+  logfile_groups => [
+      {file_name => 'test1.log', size => '10M'},
+      {file_name => 'test2.log', size => '10M'},
+    ],
+  ...
+  default_tablespace => {
+    name      => 'USERS',
+    datafile  => {
+      file_name  => 'users.dbs',
+      size       => '1G',
+      reuse      =>  true,
+    },
+    extent_management => {
+      type          => 'local',
+      autoallocate  => true,
+    }
+  },
+  ...
+  datafiles       => [
+    {file_name   => 'file1.dbs', size => '1G', reuse => true},
+    {file_name   => 'file2.dbs', size => '1G', reuse => true},
+  ],
+  ...
+  default_temporary_tablespace => {
+    name      => 'TEMP',
+    type      => 'bigfile',
+    tempfile  => {
+      file_name  => 'tmp.dbs',
+      size       => '1G',
+      reuse      =>  true,
+      autoextend => {
+        next    => '10K',
+        maxsize => 'unlimited',
+      }
+    },
+    extent_management => {
+      type          => 'local',
+      uniform_size  => '1G',
+    },
+  },
+  ....
+  undo_tablespace   => {
+    name      => 'UNDOTBS',
+    type      => 'bigfile',
+    datafile  => {
+      file_name  => 'undo.dbs',
+      size       => '1G',
+      reuse      =>  true,
+    }
+  },
+  ....
+  sysaux_datafiles => [
+    {file_name   => 'sysaux1.dbs', size => '1G', reuse => true},
+    {file_name   => 'sysaux2.dbs', size => '1G', reuse => true},
+  ]
+
+```
+
 See the type documentation for all parameters.
 
 ```sh
