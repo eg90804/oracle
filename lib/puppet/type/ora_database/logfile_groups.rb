@@ -1,27 +1,43 @@
 # encoding: UTF-8
+require 'ora_utils/schemas'
+require 'utils/hash'
+
 newparam(:logfile_groups, :array_matching => :all) do
-  include EasyType
-  
-  desc 'One or more files to be used as redo log files.'
-  
-  #
-  # Logfile groups are passed as a Hash
-  # 1 => /logfile_1.log
-  # 2 => /logfile_2.log
-  # 3 => /logfile_3.log
-  #
-  to_translate_to_resource do | raw_resource|
-  #  raw_resource.column_data('logfile_groups')
-  end
-      
-  on_apply do | command_builder | 
-    "LOGFILE GROUP #{groups}"
-  end
+  class ::Puppet::Type::Ora_database::ParameterLogfile_groups
+    include EasyType
+    include OraUtils::Schemas
+    include Utils::Hash
 
-  private
+    desc <<-EOD 
+    Specify the logfile groups. 
 
-  def groups
-    value.to_a.collect {|e| "#{e[0]} #{e[1]}"}.join(', ')
+    Use this syntax to specify all attributes:
+
+      ora_database{'dbname':
+        ...
+        logfile_groups => [
+            {file_name => 'test1.log', size => '10M', reuse => true},
+            {file_name => 'test2.log', size => '10M', reuse => true},
+          ],
+      }
+
+    EOD
+
+    VALIDATION       = OraUtils::Schemas::DATAFILE
+
+    def validate(value)
+       value = [value] if value.is_a?(Hash) # ensure, it is an array
+      value.each {|v| ClassyHash.validate_strict(v, VALIDATION)}
+    end
+    
+    def value
+      command_segment = []
+      @value.each_index do | index|
+        v = @value[index]
+        command_segment << "group #{index + 1} #{file_specification(v)}"
+      end
+      "logfile #{command_segment.join(', ')}" if @value
+    end
   end
 
 end

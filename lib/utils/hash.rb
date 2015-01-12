@@ -18,11 +18,11 @@ module Utils
     end
 
     def content_if(key, string = default_value_for_key(key))
-      " #{string} #{value_for(key)}" if exists?(key)
+      "#{string} #{value_for(key)}" if exists?(key)
     end
 
     def key_if(key, string = default_value_for_key(key))
-      " #{string}" if exists?(key)
+      "#{string}" if exists?(key)
     end
 
     def exists?(key)

@@ -13,6 +13,7 @@ describe 'ora_database' do
       oracle_base     => '/opt/oracle',
       oracle_home     => '/opt/oracle/app/11.04',
       control_file    => 'reuse',
+      undo_tablespace => 'UNDOTBS',
       create_catalog  => 'no',  # Makes for fast testing
     }
 

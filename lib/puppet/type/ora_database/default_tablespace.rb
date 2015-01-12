@@ -54,6 +54,7 @@ newparam(:default_tablespace) do
       command_segment = "default tablespace #{value_for('name')}"
       command_segment << " datafile #{datafiles(datafile_data)}" if exists?('datafile')
       command_segment << " #{extent_management(value_for('extent_management'))}" if exists?('extent_management')
+      command_segment
     end
   end
   

@@ -5,6 +5,10 @@ ora_database{'bert':
   control_file      => 'reuse',
   create_catalog    => 'no',
   extent_management => 'local',
+  logfile_groups => [
+      {file_name => 'test1.log', size => '10M'},
+      {file_name => 'test2.log', size => '10M'},
+    ],
   default_tablespace => {
     name      => 'USERS',
     datafile  => {
@@ -28,6 +32,10 @@ ora_database{'bert':
       file_name  => 'tmp.dbs',
       size       => '1G',
       reuse      =>  true,
+      autoextend => {
+        next    => '10K',
+        maxsize => 'unlimited',
+      }
     },
     extent_management => {
       type          => 'local',
@@ -35,7 +43,7 @@ ora_database{'bert':
     },
   },
   undo_tablespace   => {
-    name      => 'UNDOTBS1',
+    name      => 'UNDOTBS',
     type      => 'bigfile',
     datafile  => {
       file_name  => 'undo.dbs',
@@ -47,6 +55,4 @@ ora_database{'bert':
     {file_name   => 'sysaux1.dbs', size => '1G', reuse => true},
     {file_name   => 'sysaux2.dbs', size => '1G', reuse => true},
   ]
-
-
 }

@@ -30,9 +30,6 @@ create database <%= name -%>
 <% if logfile -%>
   logfile <%= logfile -%>
 <% end -%>
-<% if logfile_groups -%>
-  logfile group <%= logfile_groups.collect {|e| "#{e[0]} #{e[1]}"}.join(', ') -%>
-<% end -%>
 <% if maxlogfiles -%>
   maxlogfiles <%= maxlogfiles -%>
 <% end -%>
@@ -53,8 +50,12 @@ create database <%= name -%>
 <% if extent_management == :local -%>
   extent management local
 <% end -%>
-<%= datafiles %>
-<%= sysaux_datafiles %>
-<%= default_tablespace %>
-<%= undo_tablespace %>
+<%= [
+    logfile_groups,
+    datafiles, 
+    sysaux_datafiles, 
+    default_tablespace, 
+    default_temporary_tablespace, 
+    undo_tablespace
+  ].compact.join(' ') %>
 /

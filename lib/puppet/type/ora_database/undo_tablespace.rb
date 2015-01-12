@@ -49,6 +49,7 @@ newparam(:undo_tablespace) do
       datafile_data = value_for('datafile')
       command_segment = "#{value_for('type')} undo tablespace #{value_for('name')}"
       command_segment << " datafile #{datafiles(datafile_data)}" if exists?('datafile')
+      command_segment
     end
   end
   
