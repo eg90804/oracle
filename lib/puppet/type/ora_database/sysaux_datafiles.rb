@@ -5,7 +5,6 @@ require 'utils/hash'
 newparam(:sysaux_datafiles, :array_matching => :all) do
   class ::Puppet::Type::Ora_database::ParameterSysaux_datafiles
     include EasyType
-    include EasyType::Mungers::Array
     include OraUtils::Schemas
     include Utils::Hash
 
