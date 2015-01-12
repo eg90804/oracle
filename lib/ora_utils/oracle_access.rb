@@ -5,6 +5,8 @@ require 'ora_utils/sql'
 module OraUtils
   module OracleAccess
 
+    OS_USER_NAME = 'ASM_OS_USER'
+
     def self.included(parent)
       parent.extend(OracleAccess)
     end
@@ -85,6 +87,12 @@ module OraUtils
     def sid_from_resource
       oratab = OraUtils::OraTab.new
       resource.sid.empty? ? oratab.default_sid : resource.sid
+    end
+
+    private
+
+    def default_asm_user
+      ENV[OS_USER_NAME] ||  Facter.value(OS_USER_NAME) || 'grid'
     end
 
 

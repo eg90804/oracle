@@ -60,13 +60,5 @@ module Puppet
     property  :compat_rdbms
     property  :disks
 
-
-    private
-
-    def default_asm_user
-      ENV[OS_USER_NAME] ||  Facter.value(OS_USER_NAME) || 'grid'
-    end
-
-
   end
 end
