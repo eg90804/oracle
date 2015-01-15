@@ -343,7 +343,7 @@ See the type documentation for all parameters.
 
 ```sh
 $ puppet describe ora_database
-``
+```
 
 ##Limitations
 

@@ -91,7 +91,7 @@ module OraUtils
 
 	  def running_database_sids
 	  	database_sids.select do |sid|
-	  		`pgrep -f ^ora_pmon_#{sid}$` != ''
+	  		`pgrep -f "^(ora|xe)_pmon_#{sid}$"` != ''
 	  	end
 	  end
 
