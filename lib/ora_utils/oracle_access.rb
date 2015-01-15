@@ -39,6 +39,7 @@ module OraUtils
       results = []
       oratab = OraTab.new
       oratab.running_database_sids.each do |sid|
+        Puppet.debug "executing #{command} on #{sid}"
         results = results + sql(command, {:sid => sid}.merge(parameters))
       end
       results
