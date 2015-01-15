@@ -33,7 +33,7 @@ module Puppet
 
     on_create do | command_builder |
       statement = template('puppet:///modules/oracle/ora_asm_diskgroup/create.sql.erb', binding)
-      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => default_asm_user)
+      command_builder.add(statement, :sid => sid, :username => 'sysasm')
     end
 
     on_modify do | command_builder |
@@ -43,7 +43,7 @@ module Puppet
 
     on_destroy do | command_builder |
       statement = template('puppet:///modules/oracle/ora_asm_diskgroup/destroy.sql.erb', binding)
-      command_builder.add(statement, :sid => sid, :username => 'sysasm', :os_user => default_asm_user)
+      command_builder.add(statement, :sid => sid, :username => 'sysasm')
     end
 
 
