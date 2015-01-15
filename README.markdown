@@ -12,8 +12,9 @@
     * [Setup requirements](#setup-requirements)
     * [Beginning with oracle](#beginning-with-oracle)
 4. [Usage - Configuration options and additional functionality](#usage)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+5. [Troubleshooting](#troubleshooting)
+6. [Limitations - OS compatibility, etc.](#limitations)
+7. [Development - Guide for contributing to the module](#development)
     * [OS support](#os-support)
     * [Oracle versions support](#oracle-version-support)
     * [Managable Oracle objects](#managable-oracle-objects)
@@ -344,6 +345,16 @@ See the type documentation for all parameters.
 ```sh
 $ puppet describe ora_database
 ```
+
+##Troubleshooting
+
+When it fails on a Master-Agent setup you can do the following actions:
+
+- Check the time difference/timezone between all the puppet master and agent machines.
+- Update oracle and its dependencies on the puppet master.
+- After adding or refreshing the easy_type or oracle modules you need to restart all the PE services on the puppet master (this will flush the PE cache) and always do a puppet agent run on the Puppet master
+- To solve this error "no such file to load -- easy_type" you need just to do a puppet run on the puppet master when it is still failing you can move the easy_type module to its primary module location ( /etc/puppetlabs/puppet/module )
+
 
 ##Limitations
 
