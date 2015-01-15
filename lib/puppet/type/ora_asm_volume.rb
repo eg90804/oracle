@@ -3,7 +3,7 @@ $:.unshift(Pathname.new(__FILE__).dirname.parent.parent)
 $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_type' + 'lib')
 require 'easy_type'
 require 'ora_utils/asm_index_parser'
-require 'ora_utils/asm_access'
+require 'ora_utils/commands'
 require 'ora_utils/title_parser'
 
 
@@ -11,7 +11,7 @@ require 'ora_utils/title_parser'
 module Puppet
   newtype(:ora_asm_volume) do
     include EasyType
-    include ::OraUtils::AsmAccess
+    include ::OraUtils::Commands
     extend ::OraUtils::TitleParser
 
     desc "The ASM volumes"

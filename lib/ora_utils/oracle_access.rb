@@ -11,7 +11,6 @@ module OraUtils
       parent.extend(OracleAccess)
     end
 
-
     ##
     #
     # Use this function to execute Oracle statements on a set of specfied sids
@@ -45,7 +44,6 @@ module OraUtils
       results
     end
 
-
     ##
     #
     # Use this function to execute Oracle statements
@@ -54,10 +52,9 @@ module OraUtils
     #
     #
     def sql( command, options = {})
-      @sql ||= OraUtils::Sql.new(options)
-      sid = options.fetch(:sid) { fail "SID must be present"}
-      Puppet.debug "Executing: #{command} on database #{sid}"
-      csv_string = execute_sql(command, options)
+      @sql = Sql.new(options)
+      sid = @sql.sid
+      csv_string = @sql.execute(command)
       add_sid_to(convert_csv_data_to_hash(csv_string, [], :converters=> lambda {|f| f ? f.strip : nil}),sid)
     end
 
@@ -65,12 +62,6 @@ module OraUtils
       command_builder.options.merge!(:sid => sid)
       nil
     end
-
-    def execute_sql(command, options)
-      @sql = OraUtils::Sql.new( options)
-      @sql.execute(command)
-    end
-
 
     def add_sid_to(elements, sid)
       elements.collect{|e| e['SID'] = sid; e}
@@ -89,13 +80,6 @@ module OraUtils
       oratab = OraUtils::OraTab.new
       resource.sid.empty? ? oratab.default_sid : resource.sid
     end
-
-    private
-
-    def default_asm_user
-      ENV[OS_USER_NAME] ||  Facter.value(OS_USER_NAME) || 'grid'
-    end
-
 
   end
 end

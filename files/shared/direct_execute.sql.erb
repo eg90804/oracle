@@ -1,7 +1,7 @@
-<% if @oraPassword -%>
-  connect <%= @oraUser -%>/<%= @oraPassword -%>;
+<% if @password -%>
+connect <%= @username -%>/<%= @password -%>;
 <% else -%>
-  connect / as <%= @oraUser -%>;
+connect / as <%= @username -%>;
 <% end %>
 SET PAGES 0 EMB ON NEWP NONE
 SET NEWPAGE 0
