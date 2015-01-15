@@ -16,7 +16,7 @@ module OraUtils
       @os_user     = @command.os_user
       @username    = @command.username
       @password    = @command.password
-      @timeout     = @command.password
+      @timeout     = @command.timeout
       @daemonized  = @command.daemonized
       if @daemonized
         @executor  = OraDaemon.run(@os_user, @sid, @username, @password)

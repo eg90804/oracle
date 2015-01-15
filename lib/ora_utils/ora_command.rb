@@ -25,7 +25,7 @@ module OraUtils
       @sid            = options.fetch(:sid) { raise ArgumentError, "you need to specify a sid for asm access"}
       if asm_sid?
         @os_user      = options.fetch(:os_user) {default_asm_user}
-        @username     = options.fetch(:username){'asmdba'}
+        @username     = options.fetch(:username){'sysasm'}
       else
         @os_user      = options.fetch(:os_user) {default_ora_user}
         @username     = options.fetch(:username){'sysdba'}

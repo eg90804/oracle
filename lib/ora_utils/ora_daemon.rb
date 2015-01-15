@@ -6,8 +6,8 @@ module OraUtils
 
     ORACLE_ERROR    = /ORA-.*|SP-.*|SP2-.*/
 
-    def self.run(os_user, sid, username='sysdba', password=nil, timeout = nil)
-      daemon = super(identity(sid, username))
+    def self.run(os_user, sid, username=nil, password=nil, timeout = nil)
+      daemon = super(identity(sid, os_user))
       if daemon
         return daemon
       else
@@ -29,7 +29,7 @@ module OraUtils
       @imeout     = @sqlplus.timeout
       Puppet.info "Starting the Oracle daemon with os user #{@os_user} on sid #{sid}"
       command = @sqlplus.command_string
-      super(self.class.identity(sid,username), command, os_user)
+      super(self.class.identity(sid,os_user), command, os_user)
       initial_setup
     end
 
