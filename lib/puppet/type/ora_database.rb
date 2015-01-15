@@ -3,6 +3,7 @@ $:.unshift(Pathname.new(__FILE__).dirname.parent.parent)
 $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_type' + 'lib')
 require 'easy_type'
 require 'ora_utils/oracle_access'
+require 'ora_utils/commands'
 require 'ora_utils/ora_tab'
 require 'ora_utils/directories'
 
@@ -11,6 +12,7 @@ module Puppet
     include EasyType
     include ::OraUtils::OracleAccess
     include ::OraUtils::Directories
+    include ::OraUtils::Commands
 
     SCRIPTS = [
       "CreateDBCatalog.sql",
@@ -25,7 +27,7 @@ module Puppet
 
     desc "This resource allows you to manage an Oracle Database."
 
-    set_command([:sql, :remove_directories])
+    set_command([:sql, :remove_directories, :srvctl])
 
     ensurable
 
@@ -35,12 +37,11 @@ module Puppet
         create_init_ora_file
         add_oratab_entry
         create_ora_scripts(SCRIPTS)
-        statement = create_database_script
-        command_builder.add(statement, :sid => name, :daemonized => false)
-        if create_catalog?
-          SCRIPTS.each do |script| 
-            command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => name, :daemonized => false)
-          end
+        create_database(command_builder)
+        execute_scripts( command_builder)
+        if is_cluster?
+          register_database( command_builder)
+          add_instances(command_builder)
         end
         nil
       rescue
@@ -90,9 +91,35 @@ module Puppet
 		parameter :default_temporary_tablespace
 		parameter :undo_tablespace
 		parameter :sysaux_datafiles
+    parameter :instances
     # -- end of attributes -- Leave this comment if you want to use the scaffolder
 
     private
+
+
+    def create_database( command_builder)
+      statement = create_database_script
+      command_builder.add(statement, :sid => name, :daemonized => false)
+    end
+
+    def register_database( command_builder)
+      command_builder.after( "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name}", :srvctl, :sid => name)
+    end
+
+    def execute_scripts( command_builder)
+      if create_catalog?
+        SCRIPTS.each do |script| 
+          command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => name, :daemonized => false)
+        end
+      end
+    end
+
+    def add_instances( command_builder)
+      instances.each do | instance, node|
+        command_builder.after("add instance -d #{name} -i #{instance} -n #{node}", :srvctl)
+      end
+    end
+
 
     def create_database_script
       script = 'create.sql'
@@ -125,6 +152,10 @@ module Puppet
       path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
       File.open(path, 'w') { |f| f.write(content) }
       ownened_by_oracle(path)
+    end
+
+    def is_cluster?
+      instances.count > 0
     end
 
     def init_ora_path
