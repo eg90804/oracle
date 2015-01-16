@@ -1,3 +1,8 @@
+spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/rac_post_create.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
 select group# from v$log where group# = 3;
 select group# from v$log where group# = 4;
 
@@ -15,3 +20,6 @@ shutdown immediate
 
 host srvctl enable database -d <%= name %>
 host srvctl start database -d <%= name %>
+
+spool off
+exit

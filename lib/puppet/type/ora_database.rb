@@ -38,7 +38,7 @@ module Puppet
         create_init_ora_file
         create_ora_scripts(SCRIPTS)
         add_oratab_entry
-        create_orapwd_file(command_builder)
+        create_ora_pwd_file( command_builder)
         if is_cluster?
           register_database( command_builder)
           add_instances(command_builder)
@@ -143,8 +143,9 @@ module Puppet
     end
 
     def rac_post_create_actions( command_builder)
-      statement = template('puppet:///modules/oracle/ora_database/rac_post_create_actions.sql.erb', binding)
-      command_builder.add(statement, :sid => @dbname, :daemonized => false)
+      script = 'rac_post_create_actions.sql'
+      create_ora_script(script)
+      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false)
     end
 
     def execute_scripts( command_builder)
@@ -165,8 +166,8 @@ module Puppet
       content
     end
 
-    def create_ora_pwd_file
-      command_builder.add("file=#{oracle_home}E/dbs/orapw#{name} force=y password=#{system_password}", :orapwd, :sid => @dbname)
+    def create_ora_pwd_file(command_builder)
+      command_builder.add("file=#{oracle_home}/dbs/orapw#{name} force=y password=#{sys_password}", :orapwd, :sid => @dbname)
     end
 
     def create_init_ora_file

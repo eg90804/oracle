@@ -1,7 +1,7 @@
 require 'ora_utils/ora_command'
 
 module OraUtils
-  class OraPwdCommand < OraCommand
+  class OrapwdCommand < OraCommand
 
     def initialize(options = {})
       super(:orapwd, options)

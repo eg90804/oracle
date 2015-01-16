@@ -39,7 +39,7 @@ module OraUtils
     def execute(arguments)
       options = {:uid => @os_user, :failonfail => true}
       value = ''
-      Timeout::timeout(@timeout) do
+      within_time(@timeout) do
         Puppet.debug "Executing #{@command} command: #{arguments} on #{@sid} as #{os_user}, connected as #{username}"
         value = Puppet::Util::Execution.execute(command_string(arguments), options)
       end
@@ -47,6 +47,16 @@ module OraUtils
     end
 
     private
+
+    def within_time(timeout)
+      if timeout == 0
+        yield
+      else
+        Timeout::timeout(timeout) do
+          yield
+        end
+      end
+    end
 
     def validate_sid
       raise ArgumentError, "sid #{@sid} doesn't exist on node" unless @ratab.valid_sid?(@sid) 
@@ -57,7 +67,7 @@ module OraUtils
     end
 
     def check_options(options)
-      options.each_key {| key|  raise ArgumentError, "option #{key} invalid for asm" unless @valid_options.include?(key)}
+      options.each_key {| key|  raise ArgumentError, "option #{key} invalid for #{@command}. Only #{@valid_options.join(', ')} are supported" unless @valid_options.include?(key)}
     end
 
     def default_asm_user

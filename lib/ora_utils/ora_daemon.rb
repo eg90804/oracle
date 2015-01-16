@@ -26,7 +26,7 @@ module OraUtils
       @username   = @sqlplus.username
       @password   = @sqlplus.password
       @sid        = @sqlplus.sid
-      @imeout     = @sqlplus.timeout
+      @timeout    = @sqlplus.timeout
       Puppet.info "Starting the Oracle daemon with os user #{@os_user} on sid #{sid}"
       command = @sqlplus.command_string
       super(self.class.identity(sid,os_user), command, os_user)
