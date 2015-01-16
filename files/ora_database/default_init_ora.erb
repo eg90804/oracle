@@ -26,8 +26,3 @@ diagnostic_dest='<%= oracle_base -%>/admin/<%= name -%>/ddump'
 dispatchers='(PROTOCOL=TCP) (SERVICE=<%= name -%>XDB)'
 open_cursors=300 
 remote_login_passwordfile='EXCLUSIVE'
-undo_tablespace='UNDOTBS'
-# You may want to ensure that control files are created on separate physical
-# devices
-control_files = (ora_control1, ora_control2)
-compatible ='11.1.0'

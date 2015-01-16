@@ -23,9 +23,9 @@ newparam(:instances) do
     EOD
 
 
-    def validate(value)
-      fail "instances should be a hash" unless value.is_a?(Hash)
-    end
+  def validate(value)
+    fail "instances should be a hash" unless value.is_a?(Hash)
+  end
 
   end
 end

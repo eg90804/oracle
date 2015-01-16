@@ -1,7 +1,7 @@
 whenever sqlerror continue
 shutdown abort
 whenever sqlerror exit failure
-startup nomount
+startup nomount pfile="<%= init_ora_path -%>"
 create database <%= name -%>
 <% if system_password -%>
    user system identified by <%= system_password -%>
@@ -59,3 +59,10 @@ create database <%= name -%>
     undo_tablespace
   ].compact.join(' ') %>
 /
+
+
+set verify off echo on linesize 2048
+column ctl_files NEW_VALUE ctl_files
+select concat('control_files=''', concat(replace(value, ', ', ''','''), '''')) ctl_files
+from v$parameter where name ='control_files';
+host echo &ctl_files >> <%= init_ora_path -%>

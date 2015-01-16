@@ -22,7 +22,7 @@ module OraUtils
       @oratab         = OraUtils::OraTab.new
       @password       = options[:password] # may be emptu
       @timeout        = options.fetch(:timeout) { DEFAULT_TIMEOUT}
-      @sid            = options.fetch(:sid) { raise ArgumentError, "you need to specify a sid for asm access"}
+      @sid            = options.fetch(:sid) { raise ArgumentError, "you need to specify a sid for oracle access"}
       if asm_sid?
         @os_user      = options.fetch(:os_user) {default_asm_user}
         @username     = options.fetch(:username){'sysasm'}

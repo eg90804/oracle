@@ -1,0 +1,17 @@
+select group# from v$log where group# = 3;
+select group# from v$log where group# = 4;
+
+alter database add logfile thread 2 group 3 size 512M, group 4 size 512M;
+alter database enable public thread 2;
+
+host echo cluster_database=true >> <%= init_ora_path %>
+host echo remote_listener=<%= scan_name %>:<%= scan_port -%> >> <%= init_ora_path %>
+
+<% if spfile_location -%>
+create spfile='<%= spfile_location -%>/<%= name %>/spfile<%= name -%>.ora' FROM pfile='<%= init_ora_path -%>';
+<% end -%>
+
+shutdown immediate
+
+host srvctl enable database -d <%= name %>
+host srvctl start database -d <%= name %>
