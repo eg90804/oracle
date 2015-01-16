@@ -33,6 +33,8 @@ module Puppet
 
     on_create do | command_builder |
       begin
+        require 'ruby-debug'
+        debugger
         @dbname = is_cluster? ? instance_name : name
         create_directories
         create_init_ora_file
@@ -61,6 +63,10 @@ module Puppet
     end
 
     on_destroy do | command_builder |
+      if is_cluster?
+        remove_instance_registrations( command_builder)
+        remove_database_registration( command_builder)
+      end
       statement = template('puppet:///modules/oracle/ora_database/destroy.sql.erb', binding)
       command_builder.add(statement, :sid => name, :daemonized => false)
       command_builder.after('', :remove_directories)
@@ -127,6 +133,16 @@ module Puppet
       command_builder.add(statement, :sid => @dbname, :daemonized => false)
     end
 
+    def remove_instance_registrations( command_builder)
+      instances.each do | instance, node|
+        command_builder.add("remove instance -d #{name} -i #{instance}", :srvctl, :sid => @dbname)
+      end
+    end
+
+    def remove_database_registration( command_builder)
+      command_builder.add("remove database -d #{name}", :srvctl, :sid => @dbname)
+    end
+
     def rac_post_create_actions( command_builder)
       statement = template('puppet:///modules/oracle/ora_database/rac_post_create_actions.sql.erb', binding)
       command_builder.add(statement, :sid => @dbname, :daemonized => false)
@@ -184,13 +200,15 @@ module Puppet
       instance_names = instances.keys.sort    # sort the keys for ruby 1.8.7 Hash ordering
       instance_names.each_index do |index|
         instance = instance_names[index]
+        instance_no = index + 1
         file.write("#\n")
         file.write("# Parameters inserted by Puppet ora_database\n")
         file.write("#\n")
-        file.write("#{instance}#{index}.instance_number=#{index}\n")
-        file.write("#{instance}#{index}.thread=#{index}\n")
-        file.write("#{instance}#{index}.undo_tablespace=UNDOTBS#{index}\n")
+        file.write("#{instance}#{instance_no}.instance_number=#{instance_no}\n")
+        file.write("#{instance}#{instance_no}.thread=#{instance_no}\n")
+        file.write("#{instance}#{instance_no}.undo_tablespace=UNDOTBS#{instance_no}\n")
       end
+      file.write("#{instance}#{instance_no}.undo_tablespace=UNDOTBS#{instance_no}\n")
     end
 
     def is_cluster?

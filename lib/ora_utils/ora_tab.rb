@@ -41,7 +41,7 @@ module OraUtils
 		end
 
 		def append_new_entry(sid, home, start)
-			new_content = "#{oratab_content}\n#{sid}:#{home}:#{start}"
+			new_content = "#{oratab_content}\n#{sid}:#{home}:#{start}\n"
 		end
 
 		def write(content)
