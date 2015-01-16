@@ -6,7 +6,7 @@ module OraUtils
     end
 
 
-    [:asmcmd, :srvctl].each do | command|
+    [:asmcmd, :srvctl, :orapwd].each do | command|
       file  = "ora_utils/#{command}_command"
       klass = "#{command.to_s.capitalize}Command"
       require file

@@ -27,19 +27,18 @@ module Puppet
 
     desc "This resource allows you to manage an Oracle Database."
 
-    set_command([:sql, :remove_directories, :srvctl])
+    set_command([:sql, :remove_directories, :srvctl, :orapwd])
 
     ensurable
 
     on_create do | command_builder |
       begin
-        require 'ruby-debug'
-        debugger
         @dbname = is_cluster? ? instance_name : name
         create_directories
         create_init_ora_file
         create_ora_scripts(SCRIPTS)
         add_oratab_entry
+        create_orapwd_file(command_builder)
         if is_cluster?
           register_database( command_builder)
           add_instances(command_builder)
@@ -166,6 +165,10 @@ module Puppet
       content
     end
 
+    def create_ora_pwd_file
+      command_builder.add("file=#{oracle_home}E/dbs/orapw#{name} force=y password=#{system_password}", :orapwd, :sid => @dbname)
+    end
+
     def create_init_ora_file
       File.open(init_ora_path, 'w') do |file| 
         file.write(init_ora_content)
@@ -204,11 +207,10 @@ module Puppet
         file.write("#\n")
         file.write("# Parameters inserted by Puppet ora_database\n")
         file.write("#\n")
-        file.write("#{instance}#{instance_no}.instance_number=#{instance_no}\n")
-        file.write("#{instance}#{instance_no}.thread=#{instance_no}\n")
-        file.write("#{instance}#{instance_no}.undo_tablespace=UNDOTBS#{instance_no}\n")
+        file.write("#{instance}.instance_number=#{instance_no}\n")
+        file.write("#{instance}.thread=#{instance_no}\n")
+        file.write("#{instance}.undo_tablespace=UNDOTBS#{instance_no}\n")
       end
-      file.write("#{instance}#{instance_no}.undo_tablespace=UNDOTBS#{instance_no}\n")
     end
 
     def is_cluster?
