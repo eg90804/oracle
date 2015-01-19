@@ -43,6 +43,7 @@ module Puppet
     parameter :role_name
     parameter :sid
     property  :password
+    property  :grants
 
   end
 end
