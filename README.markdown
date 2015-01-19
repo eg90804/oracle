@@ -149,6 +149,16 @@ ora_role {'just_a_role@sid':
 }
 ```
 
+You can also add grants to a role:
+
+```puppet
+ora_role {'just_a_role@sid':
+  ensure    => present,
+  grants    => ['create session','create table'],
+}
+```
+
+
 ###ora_service
 
 This type allows you to create or delete a service inside an Oracle Database.
