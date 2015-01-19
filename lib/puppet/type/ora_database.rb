@@ -129,7 +129,7 @@ module Puppet
 
     def create_database( command_builder)
       statement = create_database_script
-      command_builder.add(statement, :sid => @dbname, :daemonized => false)
+      command_builder.add(statement, :sid => @dbname, :daemonized => false, :timeout => 0)
     end
 
     def remove_instance_registrations( command_builder)
@@ -145,13 +145,13 @@ module Puppet
     def rac_post_create_actions( command_builder)
       script = 'rac_post_create_actions.sql'
       create_ora_script(script)
-      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false)
+      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
     end
 
     def execute_scripts( command_builder)
       if create_catalog?
         SCRIPTS.each do |script| 
-          command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false)
+          command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
         end
       end
     end
@@ -185,11 +185,11 @@ module Puppet
     end
 
     def create_ora_scripts( scripts)
+      Puppet.info "creating scripts #{scripts.join(', ')}"
       scripts.each {|s| create_ora_script(s)}
     end
 
     def create_ora_script( script)
-      Puppet.info "creating script #{script}"
       content = template("puppet:///modules/oracle/ora_database/#{script}.erb", binding)
       path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
       File.open(path, 'w') { |f| f.write(content) }
