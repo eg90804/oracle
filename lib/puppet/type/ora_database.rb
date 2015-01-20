@@ -114,7 +114,12 @@ module Puppet
 
 
     def register_database( command_builder)
-      command_builder.add( "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name} ", :srvctl, :sid => @dbname)
+      command = if spfile_location
+        "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name} -p #{spfile_location}/#{name}/spfile#{name}.ora "
+      else
+        "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name} "
+      end
+      command_builder.add( command, :srvctl, :sid => @dbname)
     end
 
     def add_instances( command_builder)
