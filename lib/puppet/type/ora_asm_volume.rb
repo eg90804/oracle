@@ -27,7 +27,7 @@ module Puppet
     end
 
     on_create do | command_builder |
-      command_builder.add( "volcreate -G #{diskgroup} -s #{size} #{volume_name}", :sid => sid)
+      command_builder.add( "volcreate -G #{diskgroup} -s #{size}M #{volume_name}", :sid => sid)
     end
 
     on_modify do | command_builder|
