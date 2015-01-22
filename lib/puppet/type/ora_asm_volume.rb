@@ -31,7 +31,8 @@ module Puppet
     end
 
     on_modify do | command_builder|
-      Puppet.info "Modification of asm volumes not supported yet"
+      Puppet.warning "Modification of asm volumes not supported yet"
+      nil
     end
 
     on_destroy do |command_builder|
