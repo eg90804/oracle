@@ -5,6 +5,7 @@ require 'easy_type'
 require 'ora_utils/oracle_access'
 require 'ora_utils/title_parser'
 require 'ora_utils/ora_tab'
+require 'resources/ora_asm_diskgroup'
 
 module Puppet
   #
@@ -25,10 +26,7 @@ module Puppet
     set_command(:sql)
 
     to_get_raw_resources do
-      oratab = OraUtils::OraTab.new
-      sids = oratab.running_asm_sids
-      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/index.sql.erb', binding)
-      sql_on(sids, statement)
+      ::Resources::OraAsmDiskgroup.raw_resources
     end
 
     on_create do | command_builder |

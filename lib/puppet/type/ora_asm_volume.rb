@@ -4,6 +4,7 @@ $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_ty
 require 'easy_type'
 require 'ora_utils/commands'
 require 'ora_utils/title_parser'
+require 'resources/ora_asm_volume'
 
 
 # @nodoc
@@ -20,10 +21,7 @@ module Puppet
     set_command(:asmcmd)
 
     to_get_raw_resources do
-      oratab = OraUtils::OraTab.new
-      sids = oratab.running_asm_sids
-      statement = template('puppet:///modules/oracle/ora_asm_volume/index.sql.erb', binding)
-      sql_on(sids, statement)
+      ::Resources::OraAsmVolume.raw_resources
     end
 
     on_create do | command_builder |
