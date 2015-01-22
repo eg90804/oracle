@@ -101,9 +101,14 @@ module OraUtils
 	  	end
 	  end
 
-	  def default_sid
+	  def default_database_sid
 	    database_sids.first || ''
 	  end
+
+	  def default_asm_sid
+	    asm_sids.first || ''
+	  end
+
 
 	  private
 	    def comment?(line)

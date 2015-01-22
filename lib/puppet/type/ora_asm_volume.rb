@@ -38,12 +38,12 @@ module Puppet
       command_builder.add("voldelete -G #{diskgroup} #{volume_name}", :sid => sid)
     end
 
-    map_title_to_sid([:diskgroup, :chop.to_proc], :volume_name) { /^((.*\:)?(@?.*?)?(\@.*?)?)$/}
+    map_title_to_asm_sid([:diskgroup, :chop.to_proc], :volume_name) { /^((.*\:)?(@?.*?)?(\@.*?)?)$/}
     #
     # property  :new_property  # For every property and parameter create a parameter file
     #
     parameter :name
-    parameter :sid
+    parameter :asm_sid      # The included file is asm_sid, but the parameter is named sid
     parameter :volume_name
 		parameter :diskgroup
     parameter :volume_device

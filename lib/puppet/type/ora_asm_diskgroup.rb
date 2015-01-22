@@ -47,11 +47,11 @@ module Puppet
     end
 
 
-    map_title_to_sid(:groupname) { /^((@?.*?)?(\@.*?)?)$/}
+    map_title_to_asm_sid(:groupname) { /^((@?.*?)?(\@.*?)?)$/}
 
     parameter :name
     parameter :groupname
-    parameter :sid
+    parameter :asm_sid      # The included file is asm_sid, but the parameter is named sid
 
     parameter :diskgroup_state
     property  :redundancy_type
