@@ -27,7 +27,7 @@ module Puppet
     to_get_raw_resources do
       oratab = OraUtils::OraTab.new
       sids = oratab.running_asm_sids
-      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/index.sql', binding)
+      statement = template('puppet:///modules/oracle/ora_asm_diskgroup/index.sql.erb', binding)
       sql_on(sids, statement)
     end
 
