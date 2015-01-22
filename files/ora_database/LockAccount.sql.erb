@@ -4,18 +4,20 @@ Rem This SQL script is generated. In case of changes, do not change this sql scr
 Rem
 
 set verify off echo on
+set linesize 80
 
 connect / as sysdba
-BEGIN
- FOR item IN (SELECT USERNAME FROM DBA_USERS WHERE ACCOUNT_STATUS IN ('OPEN', 'LOCKED', 'EXPIRED') AND USERNAME NOT IN ('SYS','SYSTEM') )
- LOOP
-  dbms_output.put_line('Locking and Expiring: ' || item.USERNAME);
+
+begin
+ for item in (select username from dba_users where account_status in ('OPEN', 'LOCKED', 'EXPIRED') and username not in ('SYS','SYSTEM') )
+ loop
+  dbms_output.put_line('Locking and Expiring: ' || item.username);
   execute immediate 'alter user ' ||
     sys.dbms_assert.enquote_name(
-      sys.dbms_assert.schema_name(item.USERNAME), false) ||
-    ' password expire account lock' ;
- END LOOP;
-END;
+      sys.dbms_assert.schema_name(item.username), false) ||
+      ' password expire account lock' ;
+ end loop;
+end;
 /
 spool off
 exit

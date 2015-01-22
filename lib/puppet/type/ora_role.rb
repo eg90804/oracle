@@ -30,7 +30,8 @@ module Puppet
     end
 
     on_modify do | command_builder |
-      command_builder.add("alter role# {role_name}", :sid => sid)
+#      command_builder.add("alter role #{role_name}", :sid => sid)
+      info "Role alteration not pollible, command ignored"
     end
 
     on_destroy do | command_builder |

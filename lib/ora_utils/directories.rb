@@ -19,6 +19,7 @@ module OraUtils
       make_oracle_directory "#{oracle_base}/admin/#{name}"
       make_oracle_directory "#{oracle_base}/admin/#{name}/adump"
       make_oracle_directory "#{oracle_base}/admin/#{name}/ddump"
+      make_oracle_directory "#{oracle_base}/admin/#{name}/dpdump"
       make_oracle_directory "#{oracle_base}/admin/#{name}/hdump"
       make_oracle_directory "#{oracle_base}/admin/#{name}/pfile"
       make_oracle_directory "#{oracle_base}/admin/#{name}/scripts"
@@ -29,10 +30,10 @@ module OraUtils
     def make_oracle_directory(path)
       Puppet.debug "creating directory #{path}"
       FileUtils.mkdir_p path
-      ownened_by_oracle(path)
+      owned_by_oracle(path)
     end
 
-    def ownened_by_oracle(*path)
+    def owned_by_oracle(*path)
       Puppet.debug "Setting ownership for #{path}"
       FileUtils.chmod 0775, path
       FileUtils.chown oracle_user, install_group, path
