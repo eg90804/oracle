@@ -11,13 +11,23 @@ end
 
 Facter.add("ora_asm_diskgroups") do
   setcode do
+    begin
     ::Resources::OraAsmDiskgroup.index
+    rescue
+      # Rescue all error's. We don't want errors during facts
+      nil
+    end
   end
 end
 
 Facter.add("ora_asm_volumes") do
   setcode do
+    begin
     ::Resources::OraAsmVolume.index
+    rescue
+    # Rescue all error's. We don't want errors during facts
+    nil
+    end
   end
 end
 
