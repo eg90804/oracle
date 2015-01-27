@@ -2,8 +2,12 @@ $:.unshift(Pathname.new(__FILE__).parent.parent.parent.parent + 'easy_type/lib')
 $:.unshift(Pathname.new(__FILE__).parent.parent)
 require 'facter'
 require 'puppet'
-require 'puppet/type/ora_asm_diskgroup'
-require 'puppet/type/ora_asm_volume'
+begin
+  require 'puppet/type/ora_asm_diskgroup'
+  require 'puppet/type/ora_asm_volume'
+rescue
+
+end
 
 Facter.add("ora_asm_diskgroups") do
   setcode do
