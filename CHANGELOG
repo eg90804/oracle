@@ -1,6 +1,19 @@
 History
 ========
 
+29-01-2015  version 1.5.0
+--------------------------
+- Support for asm_volumes
+- Added a fact to get asm volume information (With help from Corey Osman)
+- Fixed ora_asm_diskgroup attribute au_size
+
+
+19-01-2015  version 1.4.0
+--------------------------
+- Add grant privileges function to ora_role (Thanks to Edward Groenenberg)
+- Now works on Oracle XE (Thanks to Andreas Wegmann)
+- ora_database can now remove clustered databases
+
 12-01-2015  version 1.3.0
 --------------------------
 - Re-enginered the ora_database
