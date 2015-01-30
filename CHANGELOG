@@ -1,6 +1,10 @@
 History
 ========
 
+30-01-2015  version 1.5.1
+--------------------------
+- ora_tablespace max_size property now supports value unlimited
+
 29-01-2015  version 1.5.0
 --------------------------
 - Support for asm_volumes
