@@ -19,10 +19,6 @@ newparam(:extent_management) do
         extent_management => 'local'
     EOD
 
-  on_apply do | command_builder | 
-    " "
-  end
-
   end
   
 end

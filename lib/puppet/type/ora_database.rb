@@ -39,8 +39,7 @@ module Puppet
         create_init_ora_file
         create_all_scripts(SCRIPTS)
         add_oratab_entry
-# 3 for 2 error
-#        create_ora_pwd_file(command_builder)
+        create_ora_pwd_file(command_builder)
         if is_cluster?
           register_database(command_builder)
           add_instances(command_builder)
@@ -69,7 +68,7 @@ module Puppet
         remove_instance_registrations( command_builder)
         remove_database_registration( command_builder)
       end
-      statement = template('puppet:///modules/oracle/ora_database/Destroy.sql.erb', binding)
+      statement = template('puppet:///modules/oracle/ora_database/destroy.sql.erb', binding)
       command_builder.add(statement, :sid => name, :daemonized => false)
       command_builder.after('', :remove_directories)
     end
@@ -228,9 +227,9 @@ module Puppet
     end
 
     def write_parameters(file)
-        file.write("#\n")
-        file.write("# Parameters inserted by Puppet ora_database\n")
-        file.write("#\n")
+      file.write("#\n")
+      file.write("# Parameters inserted by Puppet ora_database\n")
+      file.write("#\n")
     end
 
     def is_cluster?
