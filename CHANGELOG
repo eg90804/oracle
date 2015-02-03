@@ -1,6 +1,10 @@
 History
 ========
 
+03-02-2015  version 1.5.2
+--------------------------
+- Added the `unless` parameter to `ora_exec`
+
 30-01-2015  version 1.5.1
 --------------------------
 - ora_tablespace max_size property now supports value unlimited
