@@ -1,6 +1,10 @@
 History
 ========
 
+07-02-2015  version 1.5.3
+--------------------------
+- Allow `ora_init_param` to manage ASM instances
+
 03-02-2015  version 1.5.2
 --------------------------
 - Added the `unless` parameter to `ora_exec`
