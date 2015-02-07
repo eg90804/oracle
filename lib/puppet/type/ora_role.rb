@@ -22,7 +22,7 @@ module Puppet
     ensurable
 
     to_get_raw_resources do
-      sql_on_all_sids "select * from dba_roles"
+      sql_on_all_database_sids "select * from dba_roles"
     end
 
     on_create do | command_builder |

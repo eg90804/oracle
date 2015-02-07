@@ -67,11 +67,11 @@ newproperty(:grants, :array_matching => :all) do
  
  
     def self.privileges
-      sql_on_all_sids "select distinct grantee, privilege from dba_sys_privs"
+      sql_on_all_database_sids "select distinct grantee, privilege from dba_sys_privs"
     end
  
     def self.granted_roles
-      sql_on_all_sids "select distinct grantee, granted_role as privilege from dba_role_privs"
+      sql_on_all_database_sids "select distinct grantee, granted_role as privilege from dba_role_privs"
     end
  
 end

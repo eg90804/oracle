@@ -29,15 +29,53 @@ module OraUtils
 
     ##
     #
-    # Use this function to execute Oracle statements
+    # Use this function to execute Oracle statements on all running databases.
+    # This excludes asm database
+    #
+    # @param command [String] this is the commands to be given
+    #
+    #
+    def sql_on_all_database_sids( command, parameters = {})
+      oratab = OraTab.new
+      sids = oratab.running_database_sids
+      sql_on_sids(sids, command, parameters)
+    end
+
+
+    ##
+    #
+    # Use this function to execute Oracle statements on all running asm sids.
+    #
+    # @param command [String] this is the commands to be given
+    #
+    def sql_on_all_asm_sids( command, parameters = {})
+      oratab = OraTab.new
+      sids = oratab.running_asm_sids
+      sql_on_sids(sids, command, parameters)
+    end
+
+    ##
+    #
+    # Use this function to execute Oracle statements on all running sid.
+    # This includes asm database
     #
     # @param command [String] this is the commands to be given
     #
     #
     def sql_on_all_sids( command, parameters = {})
-      results = []
       oratab = OraTab.new
-      oratab.running_database_sids.each do |sid|
+      oratab = OraTab.new
+      sids = oratab.running_sids
+      sql_on_sids(sids, command, parameters)
+    end
+
+
+    #
+    # Run the sql commmand on all specified sids
+    #
+    def sql_on_sids( sids, command, parameters = {})
+      results = []
+      sids.each do |sid|
         Puppet.debug "executing #{command} on #{sid}"
         results = results + sql(command, {:sid => sid}.merge(parameters))
       end
@@ -68,7 +106,7 @@ module OraUtils
     end
 
     # This is a little hack to get a specified timeout value
-     def timeout_specified
+    def timeout_specified
       if respond_to?(:to_hash)
         to_hash.fetch(:timeout) { nil} #
       else
