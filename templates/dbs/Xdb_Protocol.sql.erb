@@ -1,4 +1,4 @@
-spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Xdb_Protocol.log append
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Xdb_Protocol.log append
 Rem 
 Rem This SQL script is generated. In case of changes, do not change this sql script. 
 Rem
@@ -13,5 +13,3 @@ connect / as sysdba
 @?/rdbms/admin/catxdbj.sql
 @?/rdbms/admin/catrul.sql
 
-spool off
-exit

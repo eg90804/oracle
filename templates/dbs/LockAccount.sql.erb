@@ -1,4 +1,4 @@
-spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/LockAccount.log append
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/LockAccount.log append
 Rem 
 Rem This SQL script is generated. In case of changes, do not change this sql script. 
 Rem
@@ -19,5 +19,4 @@ begin
  end loop;
 end;
 /
-spool off
-exit
+

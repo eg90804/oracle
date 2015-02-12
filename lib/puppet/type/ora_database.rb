@@ -14,18 +14,6 @@ module Puppet
     include ::OraUtils::Directories
     include ::OraUtils::Commands
 
-# To do : make the file list a parameter to allow for a dynamic list.
-    SCRIPTS = [
-      "Catalog.sql",
-      "JServer.sql",
-      "Context.sql",
-      "Xdb_Protocol.sql",
-      "Cwmlite.sql",
-      "Grants.sql",
-      "LockAccount.sql",
-      "Psu.sql",
-      "RenameRedo1.sql"]
-
     desc "This resource allows you to manage an Oracle Database."
 
     set_command([:sql, :remove_directories, :srvctl, :orapwd])
@@ -37,21 +25,21 @@ module Puppet
         @dbname = is_cluster? ? instance_name : name
         create_directories
         create_init_ora_file
-        create_all_scripts(SCRIPTS)
         add_oratab_entry
         create_ora_pwd_file(command_builder)
+
         if is_cluster?
           register_database(command_builder)
           add_instances(command_builder)
           disable_database(command_builder)
-          create_database(command_builder)
-          post_create_actions_rac(command_builder)
-        else
-          create_one_script('Spfile.sql')
-          create_database(command_builder)
         end
-        execute_all_scripts(command_builder)
+
+        create_stage_1
+        create_stage_2
+        execute_stage_1( command_builder)
+        execute_stage_2( command_builder)
         nil
+
       rescue => e
         remove_directories
         fail "Error creating database #{name}, #{e.message}"
@@ -61,6 +49,7 @@ module Puppet
 
     on_modify do | command_builder |
       info "database modification not yet implemented"
+      nil
     end
 
     on_destroy do | command_builder |
@@ -97,13 +86,14 @@ module Puppet
     parameter :oracle_user
     parameter :install_group
     parameter :autostart
-    parameter :create_catalog
     parameter :default_tablespace
     parameter :datafiles
     parameter :default_temporary_tablespace
     parameter :undo_tablespace
     parameter :sysaux_datafiles
     parameter :spfile_location
+    parameter :config_scripts
+  
     #
     # When defining a RAC database, these become valuable
     #
@@ -114,13 +104,71 @@ module Puppet
 
     private
 
+    def create_init_ora_file
+      File.open(init_ora_file, 'w') do |file| 
+        file.write(init_ora_content)
+        if is_cluster?
+	  instance_names = instances.keys.sort    # sort the keys for ruby 1.8.7 Hash ordering
+	  instance_names.each_index do |index|
+	    instance = instance_names[index]
+	    instance_no = index + 1
+	    file.write("#\n")
+	    file.write("# Parameters inserted by Puppet ora_database (RAC)\n")
+	    file.write("#\n")
+	    file.write("#{instance}.instance_number=#{instance_no}\n")
+	    file.write("#{instance}.thread=#{instance_no}\n")
+	    file.write("#{instance}.undo_tablespace=UNDOTBS#{instance_no}\n")
+	  end
+        else
+	  file.write("#\n")
+	  file.write("# Parameters inserted by Puppet ora_database\n")
+	  file.write("#\n")
+        end
+      end      
+      owned_by_oracle( init_ora_file)
+      Puppet.debug "File #{init_ora_file} created with content"
+    end
+
+    def add_oratab_entry
+      oratab = OraUtils::OraTab.new
+      oratab.ensure_entry(@dbname, oracle_home, autostart)
+    end
+
+    def create_ora_pwd_file(command_builder)
+      command_builder.add("file=#{oracle_home}/dbs/orapw#{name} force=y password=#{sys_password} entries=20", :orapwd, :sid => @dbname)
+    end
+
+    def create_stage_1
+      content = template("puppet:///modules/oracle/ora_database/create.sql.erb", binding)
+      path = "#{oracle_base}/admin/#{name}/scripts/create.sql"
+      File.open(path, 'w') { |f| f.write(content) }
+      owned_by_oracle(path)
+    end
+
+    def create_stage_2
+      case config_scripts.count
+	when 1
+          config_scripts.each_pair do |script, content|
+            path = "#{oracle_base}/admin/#{name}/scripts/#{script}.sql"
+            File.open(path, 'w') { |f| f.write(content) }
+            owned_by_oracle(path)
+          end
+        when 2..999
+          config_scripts.each do |cs|
+            path = "#{oracle_base}/admin/#{name}/scripts/#{cs.keys}.sql"
+            File.open(path, 'w') { |f| f.write(cs.values) }
+            owned_by_oracle(path)
+          end
+        end
+    end
+
     def register_database(command_builder)
       command = if spfile_location
         "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name} -p #{spfile_location}/#{name}/spfile#{name}.ora "
       else
         "add database -d #{name} -o #{oracle_home} -n #{name} -m #{name} "
       end
-      command_builder.add( command, :srvctl, :sid => @dbname)
+      command_builder.add(command, :srvctl, :sid => @dbname)
     end
 
     def add_instances(command_builder)
@@ -133,11 +181,6 @@ module Puppet
       command_builder.add("disable database -d #{name}", :srvctl, :sid => @dbname)
     end
 
-    def create_database(command_builder)
-      statement = create_database_script
-      command_builder.add(statement, :sid => @dbname, :daemonized => false, :timeout => 0)
-    end
-
     def remove_instance_registrations(command_builder)
       instances.each do | instance, node|
         command_builder.add("remove instance -d #{name} -i #{instance}", :srvctl, :sid => @dbname)
@@ -148,88 +191,25 @@ module Puppet
       command_builder.add("remove database -d #{name}", :srvctl, :sid => @dbname)
     end
 
-    def post_create_actions_rac(command_builder)
-      script = 'Post_Create_RAC.sql'
-      create_one_script(script)
-      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
+    def execute_stage_1( command_builder)
+      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/create", :sid => @dbname, :daemonized => false, :timeout => 0)
     end
 
-    def execute_all_scripts(command_builder)
-      if !is_cluster? and spfile_location
-        script = 'Spfile.sql'
-        command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
-      end
-      if create_catalog?
-        SCRIPTS.each do |script| 
-          command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
-        end
-      end
-    end
-
-    def create_database_script
-      script = 'Create_DB.sql'
-      content = template('puppet:///modules/oracle/ora_database/Create_DB.sql.erb', binding)
-      path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
-      File.open(path, 'w') { |f| f.write(content) }
-      owned_by_oracle(path)
-      content
-    end
-
-    def create_ora_pwd_file(command_builder)
-      command_builder.add("file=#{oracle_home}/dbs/orapw#{name} force=y password=#{sys_password} entries=20", :orapwd, :sid => @dbname)
-    end
-
-    def create_init_ora_file
-      File.open(init_ora_file, 'w') do |file| 
-        file.write(init_ora_content)
-        if is_cluster?
-          write_parameters_RAC(file)
-        else
-          write_parameters(file)
-        end
-      end      
-      owned_by_oracle( init_ora_file)
-      Puppet.debug "File #{init_ora_file} created with specified init.ora content"
-    end
-
-    def add_oratab_entry
-      oratab = OraUtils::OraTab.new
-      oratab.ensure_entry(@dbname, oracle_home, autostart)
-    end
-
-    def create_all_scripts( scripts)
-      scripts.each {|s| create_one_script(s)}
-    end
-
-    def create_one_script( script)
-      content = template("puppet:///modules/oracle/ora_database/#{script}.erb", binding)
-      path = "#{oracle_base}/admin/#{name}/scripts/#{script}"
-      File.open(path, 'w') { |f| f.write(content) }
-      owned_by_oracle(path)
+    def execute_stage_2( command_builder)
+      case config_scripts.count
+	when 1
+          config_scripts.each_pair do |key, content| 
+            command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{key}", :sid => @dbname, :daemonized => false, :timeout => 0)
+	  end
+	when 2..999
+          config_scripts.each do |es| 
+            command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{es.keys}", :sid => @dbname, :daemonized => false, :timeout => 0)
+          end
+	end
     end
 
     def instance_name(entry=1)
       "#{name}#{entry}"
-    end
-
-    def write_parameters_RAC(file)
-      instance_names = instances.keys.sort    # sort the keys for ruby 1.8.7 Hash ordering
-      instance_names.each_index do |index|
-        instance = instance_names[index]
-        instance_no = index + 1
-        file.write("#\n")
-        file.write("# Parameters inserted by Puppet ora_database (RAC)\n")
-        file.write("#\n")
-        file.write("#{instance}.instance_number=#{instance_no}\n")
-        file.write("#{instance}.thread=#{instance_no}\n")
-        file.write("#{instance}.undo_tablespace=UNDOTBS#{instance_no}\n")
-      end
-    end
-
-    def write_parameters(file)
-      file.write("#\n")
-      file.write("# Parameters inserted by Puppet ora_database\n")
-      file.write("#\n")
     end
 
     def is_cluster?

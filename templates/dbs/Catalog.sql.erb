@@ -1,4 +1,4 @@
-spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Catalog.log append
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Catalog.log append
 Rem 
 Rem This SQL script is generated. In case of changes, do not change this sql script. 
 Rem
@@ -8,15 +8,9 @@ set linesize 80
 
 connect / as sysdba
 @?/rdbms/admin/catalog.sql
-@?/rdbms/admin/catblock.sql
 @?/rdbms/admin/catproc.sql
+@?/rdbms/admin/catblock.sql
 @?/rdbms/admin/catoctk.sql
 @?/rdbms/admin/owminst.plb
 @?/rdbms/admin/catclust.sql
 
-connect system/<%= system_password %>
-@?/sqlplus/admin/pupbld.sql
-@?/sqlplus/admin/help/hlpbld.sql helpus.sql
-
-spool off
-exit
