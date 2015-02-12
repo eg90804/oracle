@@ -16,7 +16,6 @@ describe 'ora_database' do
       undo_tablespace => {
         name    => 'UNDOTBS'
       },
-      create_catalog  => 'no',  # Makes for fast testing
     }
 
     EOS

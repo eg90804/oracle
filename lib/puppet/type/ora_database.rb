@@ -104,29 +104,34 @@ module Puppet
 
     private
 
+
     def create_init_ora_file
       File.open(init_ora_file, 'w') do |file| 
         file.write(init_ora_content)
         if is_cluster?
-	  instance_names = instances.keys.sort    # sort the keys for ruby 1.8.7 Hash ordering
-	  instance_names.each_index do |index|
-	    instance = instance_names[index]
-	    instance_no = index + 1
-	    file.write("#\n")
-	    file.write("# Parameters inserted by Puppet ora_database (RAC)\n")
-	    file.write("#\n")
-	    file.write("#{instance}.instance_number=#{instance_no}\n")
-	    file.write("#{instance}.thread=#{instance_no}\n")
-	    file.write("#{instance}.undo_tablespace=UNDOTBS#{instance_no}\n")
-	  end
+          write_cluster_parameters(file)
         else
-	  file.write("#\n")
-	  file.write("# Parameters inserted by Puppet ora_database\n")
-	  file.write("#\n")
+      	  file.write("#\n")
+      	  file.write("# Parameters inserted by Puppet ora_database\n")
+      	  file.write("#\n")
         end
       end      
       owned_by_oracle( init_ora_file)
       Puppet.debug "File #{init_ora_file} created with content"
+    end
+
+    def write_cluster_parameters(file)
+      instance_names = instances.keys.sort    # sort the keys for ruby 1.8.7 Hash ordering
+      instance_names.each_index do |index|
+        instance = instance_names[index]
+        instance_no = index + 1
+        file.write("#\n")
+        file.write("# Parameters inserted by Puppet ora_database (RAC)\n")
+        file.write("#\n")
+        file.write("#{instance}.instance_number=#{instance_no}\n")
+        file.write("#{instance}.thread=#{instance_no}\n")
+        file.write("#{instance}.undo_tablespace=UNDOTBS#{instance_no}\n")
+      end
     end
 
     def add_oratab_entry
@@ -140,26 +145,17 @@ module Puppet
 
     def create_stage_1
       content = template("puppet:///modules/oracle/ora_database/create.sql.erb", binding)
-      path = "#{oracle_base}/admin/#{name}/scripts/create.sql"
+      path = "#{admin_scripts_path}/create.sql"
       File.open(path, 'w') { |f| f.write(content) }
       owned_by_oracle(path)
     end
 
     def create_stage_2
-      case config_scripts.count
-	when 1
-          config_scripts.each_pair do |script, content|
-            path = "#{oracle_base}/admin/#{name}/scripts/#{script}.sql"
-            File.open(path, 'w') { |f| f.write(content) }
-            owned_by_oracle(path)
-          end
-        when 2..999
-          config_scripts.each do |cs|
-            path = "#{oracle_base}/admin/#{name}/scripts/#{cs.keys}.sql"
-            File.open(path, 'w') { |f| f.write(cs.values) }
-            owned_by_oracle(path)
-          end
-        end
+      with_config_scripts do | script, content|
+        path = "#{admin_scripts_path}/#{script}.sql"
+        File.open(path, 'w') { |f| f.write(content) }
+        owned_by_oracle(path)
+      end
     end
 
     def register_database(command_builder)
@@ -192,20 +188,13 @@ module Puppet
     end
 
     def execute_stage_1( command_builder)
-      command_builder.add("@#{oracle_base}/admin/#{name}/scripts/create", :sid => @dbname, :daemonized => false, :timeout => 0)
+      command_builder.add("@#{admin_scripts_path}/create", :sid => @dbname, :daemonized => false, :timeout => 0)
     end
 
     def execute_stage_2( command_builder)
-      case config_scripts.count
-	when 1
-          config_scripts.each_pair do |key, content| 
-            command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{key}", :sid => @dbname, :daemonized => false, :timeout => 0)
-	  end
-	when 2..999
-          config_scripts.each do |es| 
-            command_builder.after("@#{oracle_base}/admin/#{name}/scripts/#{es.keys}", :sid => @dbname, :daemonized => false, :timeout => 0)
-          end
-	end
+      with_config_scripts do | script, _|
+        command_builder.after("@#{admin_scripts_path}/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
+      end
     end
 
     def instance_name(entry=1)
@@ -222,6 +211,18 @@ module Puppet
 
     def init_ora_file
       "#{oracle_home}/dbs/init#{@dbname}.ora"
+    end
+
+    def admin_scripts_path
+      "#{oracle_base}/admin/#{name}/scripts"
+    end
+
+    def with_config_scripts
+      config_scripts.each do |entry|
+        script = entry.keys.first
+        content = entry[script]
+        yield( script, content)
+      end
     end
 
   end

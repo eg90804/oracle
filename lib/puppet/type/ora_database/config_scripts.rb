@@ -24,5 +24,26 @@ newparam(:config_scripts, :array_matching => :all ) do
 
   defaultto []
 
+  #
+  # Make sure it is always an array
+  #
+  def munge(value)
+    value.is_a?(Array) ? value : [value]
+  end
+
+  def validate(value)
+    fail "Must be an array of Hashes" unless array_of_hashes?(value) or single_hash?(value)
+  end
+
+  private
+
+  def array_of_hashes?(value)
+    value.is_a?(Array) and !value.any?{|e| !e.is_a?(Hash)}
+  end
+
+  def single_hash?(value)
+    value.is_a?(Hash) and value.count == 1
+  end
+
 end
 

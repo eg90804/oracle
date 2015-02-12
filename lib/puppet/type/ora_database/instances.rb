@@ -16,8 +16,8 @@ newparam(:instances) do
       ora_database{'dbname':
         ...
         instances       => {
-          instance1   => host1},
-          instance2   => host2},
+          instance1   => host1,
+          instance2   => host2,
         }
       }
     EOD

@@ -1,11 +1,18 @@
-ora_database{'bert':
+$oracle_home = '/opt/oracle/app/11.04'
+$oracle_base = '/opt/oracle'
+$db_name     = 'bert'
+
+ora_database{$db_name:
   ensure            => present,
   # instances         => {bert1 => 'db'},
-  oracle_base       => '/opt/oracle',
-  oracle_home       => '/opt/oracle/app/11.04',
+  oracle_base       => $oracle_base,
+  oracle_home       => $oracle_home,
   control_file      => 'reuse',
-  create_catalog    => 'no',
   extent_management => 'local',
+  config_scripts    => [
+    {'Catalog' => template('oracle/dbs/Catalog.sql.erb')},
+    # {'Context' => template('oracle/dbs/Context.sql.erb')},
+  ],
   logfile_groups => [
       {file_name => 'test1.log', size => '50M', reuse => true},
       {file_name => 'test2.log', size => '50M', reuse => true},
@@ -23,8 +30,8 @@ ora_database{'bert':
     }
   },
   datafiles       => [
-    {file_name   => 'file1.dbs', size => '50M', reuse => true},
-    {file_name   => 'file2.dbs', size => '50M', reuse => true},
+    {file_name   => 'file1.dbs', size => '100M', reuse => true},
+    {file_name   => 'file2.dbs', size => '100M', reuse => true},
   ],
   default_temporary_tablespace => {
     name      => 'TEMP',

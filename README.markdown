@@ -303,7 +303,6 @@ ora_database{'oradb':
   oracle_base     => '/opt/oracle',
   oracle_home     => '/opt/oracle/app/11.04',
   control_file    => 'reuse',
-  create_catalog  => 'no',
 }
 ```
 
@@ -370,11 +369,44 @@ ora_database{'bert':
 
 ```
 
+You can also specify some initialisation scripts.
+
+```
+ora_database{$db_name:
+  ensure            => present,
+  ...
+  config_scripts    => [
+    {'Catalog' => template('oracle/dbs/Catalog.sql.erb')},
+    {'Context' => template('oracle/dbs/Context.sql.erb')},
+  ],
+```
+
+These initialisation scripts will be executed in the order specified. The module has templates for the following scripts:
+
+- Catalog.sql.erb
+- Context.sql.erb
+- Cwmlite.sql.erb
+- Grants.sql.erb
+- Help.sql.erb
+- JServer.sql.erb
+- LockAccount.sql.erb
+- Post_Create_RAC.sql.erb
+- Psu.sql.erb
+- README
+- RenameRedo1.sql.erb
+- Xdb_Protocol.sql.erb
+
+You can find these templates in the `dbs` directory.
+
+##detailed description
+
 See the type documentation for all parameters.
 
 ```sh
 $ puppet describe ora_database
 ```
+You can also checkout an example in the [test directory](https://github.com/hajee/oracle/blob/master/tests/create_database.pp)
+
 
 ##Troubleshooting
 
@@ -384,6 +416,11 @@ When it fails on a Master-Agent setup you can do the following actions:
 - Update oracle and its dependencies on the puppet master.
 - After adding or refreshing the easy_type or oracle modules you need to restart all the PE services on the puppet master (this will flush the PE cache) and always do a puppet agent run on the Puppet master
 - To solve this error "no such file to load -- easy_type" you need just to do a puppet run on the puppet master when it is still failing you can move the easy_type module to its primary module location ( /etc/puppetlabs/puppet/module )
+
+When the `ora_database` creation fails:
+
+- First remove all `config_scripts`. Then start again. If the database creation run's fine, check the scripts.
+- Check if all the path's in the script exist and log file directories are writable by the specified Oracle user. 
 
 ##Limitations
 
@@ -419,6 +456,7 @@ Currently we have tested:
 It would be great if we could get it working and tested on:
 
 * Oracle 12
+* Oracle XE
 
 ###Managable Oracle objects
 
