@@ -1,0 +1,13 @@
+The files in this directory should be seen as a series of sample scripts.
+The script containing a 'create database' is automatically supplied
+by this Oracle easy_type and does not need to be provided.
+
+Any user specified script can be used.
+
+Required erb variables by this sample scripts are :
+  @oracle_base	-> f.e. '/opt/oracle'
+  @db_name	-> f.e. 'PROD01'
+  @db_password	-> f.e. 'Need_New_Password'
+
+Note: due to the nature the output is analyzed, either nothing or
+a comma separated string should be returned.
