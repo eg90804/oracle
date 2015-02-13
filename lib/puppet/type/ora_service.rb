@@ -38,8 +38,8 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      sql "exec dbms_service.disconnect_service('#{service_name}')", :sid => sid
-      sql "exec dbms_service.stop_service('#{service_name}', dbms_servic.all_instances)", :sid => sid
+      sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid
+      sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid
       sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid
       new_services = current_services.delete_if {|e| e == service_name }
       statement = set_services_command(new_services)
