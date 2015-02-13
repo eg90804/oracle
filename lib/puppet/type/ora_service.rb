@@ -22,7 +22,7 @@ module Puppet
 
 
     to_get_raw_resources do
-      sql_on_all_database_sids "select name from dba_services"
+      sql_on_all_database_sids "select name from service$ where deletion_date is null"
     end
 
     on_create do | command_builder |
