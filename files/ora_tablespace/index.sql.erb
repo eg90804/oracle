@@ -1,18 +1,57 @@
+with
+  pup_tablespaces as (
+    select  ts.name as tablespace_name,
+            decode(bitand(ts.dflogging,1),0,'NOLOGGING',1,'LOGGING')	as logging,
+            decode(ts.bitmapped,0,'DICTIONARY','LOCAL')			as extent_management,
+            decode(bitand(ts.flags,32),32,'AUTO','MANUAL')		as segment_space_management,
+            decode(bitand(ts.flags,256),256,'YES','NO')			as bigfile,
+            decode(ts.contents$,0,(decode(bitand(ts.flags,16),
+	      16,'UNDO','PERMANENT')),1,'TEMPORARY')			as contents,
+	    ts.blocksize						as block_size
+    from    sys.ts$ ts, sys.x$kcfistsa tsattr
+    where   ts.online$ != 3
+    and	    bitand(flags,2048) != 2048
+    and	    ts.ts# = tsattr.tsid
+    ),
+  pup_data_files as (
+    select  v.name							as file_name,
+	    ts.name							as tablespace_name,
+	    ts.blocksize * f.blocks					as bytes,
+	    decode(f.inc, 0, 'NO', 'YES')				as autoextensible,
+	    ts.blocksize * f.maxextend					as maxbytes,
+	    f.inc							as increment_by
+    from    sys.file$ f, sys.ts$ ts, sys.v$dbfile v
+    where   v.file# = f.file#
+    and     f.spare1 is NULL
+    and     f.ts# = ts.ts#
+    union all
+    select  v.name							as file_name,
+	    ts.name							as tablespace_name,
+	    decode(hc.ktfbhccval,0,ts.blocksize * hc.ktfbhcsz, NULL)	as bytes,
+	    decode(hc.ktfbhccval,0,decode(hc.ktfbhcinc,0,'NO','YES'),NULL) as autoextensible,
+	    decode(hc.ktfbhccval,0,ts.blocksize*hc.ktfbhcmaxsz,NULL)	as maxbytes,
+	    decode(hc.ktfbhccval,0,hc.ktfbhcinc,NULL)			as increment_by
+    from    sys.v$dbfile v, sys.file$ f, sys.x$ktfbhc hc, sys.ts$ ts
+    where   v.file# = f.file#
+    and     f.spare1 is NOT NULL
+    and     v.file# = hc.ktfbhcafno
+    and     hc.ktfbhctsn = ts.ts#
+    )
 select 
     t.tablespace_name,
-    logging,
-    extent_management,
-    segment_space_management,
-    bigfile,
-    file_name,
-    contents,
-    to_char(increment_by, '9999999999999999999') "INCREMENT_BY",
-    to_char(block_size, '9999999999999999999') "BLOCK_SIZE",
-    autoextensible,
-    to_char(bytes, '9999999999999999999') "BYTES",
-    to_char(maxbytes, '9999999999999999999') "MAX_SIZE"
+    t.logging,
+    t.extent_management,
+    t.segment_space_management,
+    t.bigfile,
+    f.file_name,
+    t.contents,
+    to_char(f.increment_by, '9999999999999999999') "INCREMENT_BY",
+    to_char(t.block_size, '9999999999999999999') "BLOCK_SIZE",
+    f.autoextensible,
+    to_char(f.bytes, '9999999999999999999') "BYTES",
+    to_char(f.maxbytes, '9999999999999999999') "MAX_SIZE"
 from 
-    dba_tablespaces t, 
-    dba_data_files f 
+    pup_tablespaces t, 
+    pup_data_files f 
 where
     t.tablespace_name = f.tablespace_name
