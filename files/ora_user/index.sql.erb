@@ -1,0 +1,33 @@
+select u.name as username,
+       u.user# as user_id,
+	     decode(u.password,'GLOBAL',u.password,'EXTERNAL',u.password,NULL) as password,
+	     m.status as account_status,
+	     decode(u.astatus,4,u.ltime,5,u.ltime,6,u.ltime,8,u.ltime,9,u.ltime,10,u.ltime,to_date(NULL)) as lock_date,
+	     decode(u.astatus,1,u.exptime,2,u.exptime,5,u.exptime,6,u.exptime,9,u.exptime,10,u.exptime,
+	       decode(u.ptime,'',to_date(NULL),decode(pr.limit#,2147483647,to_date(NULL),
+	         decode(pr.limit#,0,decode(dp.limit#,2147483647,to_date(NULL),u.ptime+dp.limit#/86400),
+			       u.ptime+pr.limit#/86400)))) as expiri_date,
+	     dts.name as default_tablespace,
+	     tts.name as temporary_tablespace,
+	     u.ctime as created,
+	     p.name as profile,
+	     nvl(cgm.consumer_group,'DEFAULT_CONSUMER_GROUP') as initial_rsrc_consumer_group,
+	     u.ext_username as external_name,
+	     decode(length(u.password),16,'10G ',NULL)||NVL2(u.spare4,'11G ',NULL) as passwordversions,
+	     decode(bitand(u.spare1, 16),16,'Y','N') as editions_enabled,
+	     decode(u.password,'GLOBAL','GLOBAL','EXTERNAL','EXTERNAL','PASSWORD') as authentication_type
+from   sys.user$ u left outer join sys.resource_group_mapping$ cgm
+	         on (cgm.attribute='ORACLE_USER' and cgm.status='ACTIVE' and cgm.value=u.name),
+	     sys.ts$ dts, sys.ts$ tts, sys.profname$ p,
+	     sys.user_astatus_map m, sys.profile$ pr, sys.profile$ dp
+where  u.datats#=dts.ts#
+and    u.resource$=p.profile#
+and    u.tempts#=tts.ts#
+and    u.astatus=m.status#
+and    u.type#=1
+and    u.resource$=pr.profile#
+and    dp.profile#=0
+and    dp.type#=1
+and    dp.resource#=1
+and    pr.type#=1
+and    pr.resource#=1
