@@ -27,7 +27,7 @@ module Puppet
       set_command(:sql)
 
       to_get_raw_resources do
-        sql_on_all_database_sids "select * from dba_users"
+        sql_on_all_database_sids template('puppet:///modules/oracle/ora_user/index.sql.erb', binding)
       end
 
       on_create do | command_builder |
@@ -40,7 +40,7 @@ module Puppet
       end
 
       on_destroy do | command_builder |
-        command_builder.add("drop user #{username}", :sid => sid)
+        command_builder.add("drop user #{username} cascade", :sid => sid)
       end
 
 
