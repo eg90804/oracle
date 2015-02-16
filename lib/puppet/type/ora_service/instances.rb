@@ -7,4 +7,11 @@ newproperty(:instances, :array_matching => :all) do
 
   defaultto []
 
+#
+# Make sure it is always an array
+#
+  def munge(value)
+    value.is_a?(Array) ? value : [value]
+  end
+
 end
