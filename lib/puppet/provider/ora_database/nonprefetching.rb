@@ -22,7 +22,7 @@ Puppet::Type.type(:ora_database).provide(:nonprefetching) do
     #
     # TODO: Discuss with Ed, why he prefers this. Atv this point in time it doesn't work consistently
     #
-    Pathname.glob("#{resource.oracle_home}/dbs/init#{resource.name}.ora").collect {|e| e.basename.to_s}
+    Pathname.glob("#{resource.oracle_home}/dbs/hc_#{resource.name}.dat").collect {|e|e.basename.to_s.scan(/hc_(.*).dat/).flatten}
     #
   end
 end
