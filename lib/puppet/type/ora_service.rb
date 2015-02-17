@@ -14,6 +14,16 @@ module Puppet
 
     desc %q{
       This resource allows you to manage a service in an Oracle database.
+      
+       ora_service{'service_name':
+        instances => [ 'inst1', 'inst2', 'inst3', .... ]
+        }
+
+      or for all instances
+
+      ora_service{'service_name':
+        instances => [ '*' ]
+        }
     }
 
     ensurable
@@ -27,23 +37,29 @@ module Puppet
 
     on_create do | command_builder |
       sql "exec dbms_service.create_service('#{service_name}', '#{service_name}')", :sid => sid
-      sql "exec dbms_service.start_service('#{service_name}', dbms_service.all_instances)", :sid => sid
-      new_services = current_services << service_name
-      statement = set_services_command(new_services)
-      command_builder.add(statement, :sid => sid)
+      if for_all_instances?
+        sql "exec dbms_service.start_service('#{service_name}', dbms_service.all_instances)", :sid => sid
+      else
+        if is_cluster?
+          instances.each do |n|
+            sql "exec dbms_service.start_service('#{service_name}', '#{n}')", :sid => sid
+          end
+        else
+          sql "exec dbms_service.start_service('#{service_name}')", :sid => sid
+        end
+      end
+      nil
     end
-
+    
     on_modify do | command_builder |
-      fail "It shouldn't be possible to modify a service"
+      fail "Not implemented yet."
     end
 
     on_destroy do | command_builder |
       sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid
       sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid
       sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid
-      new_services = current_services.delete_if {|e| e == service_name }
-      statement = set_services_command(new_services)
-      command_builder.add(statement, :sid => sid)
+      nil
     end
 
     map_title_to_sid(:service_name) { /^((@?.*?)?(\@.*?)?)$/}
@@ -51,15 +67,16 @@ module Puppet
     parameter :name
     parameter :service_name
     parameter :sid
+    property  :instances
 
     private
 
-      def set_services_command(services)
-        "alter system set service_names = '#{services.join('\',\'')}' scope=both"
+      def is_cluster?
+        instances.count > 0
       end
 
-      def current_services
-        provider.class.instances.map(&:service_name)
+      def for_all_instances?
+        instances == ['*']
       end
 
   end
