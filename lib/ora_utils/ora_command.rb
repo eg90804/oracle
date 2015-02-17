@@ -33,7 +33,7 @@ module OraUtils
     end
 
     def command_string(arguments = '')
-      "export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv; #{@command} #{arguments}"
+      "su - #{@os_user} -c \"export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv; #{@command} #{arguments}\""
     end
 
     def execute(arguments)
