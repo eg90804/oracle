@@ -10,7 +10,7 @@ ora_database{$db_name:
   control_file      => 'reuse',
   extent_management => 'local',
   config_scripts    => [
-    {'Catalog' => template('oracle/dbs/Catalog.sql.erb')},
+    {'Catalog2' => template('oracle/dbs/Catalog2.sql.erb')},
     # {'Context' => template('oracle/dbs/Context.sql.erb')},
   ],
   logfile_groups => [

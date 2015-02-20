@@ -1,5 +1,5 @@
 require 'easy_type'
-require 'ora_utils/sqlplus_command'
+require 'ora_utils/direct_sqlplus_command'
 
 module OraUtils
   class OraDirect
@@ -12,7 +12,7 @@ module OraUtils
     end
 
     def initialize(os_user, sid, username, password, timeout)
-      @sqlplus    = SqlplusCommand.new(
+      @sqlplus    = DirectSqlplusCommand.new(
                         :username => username,
                         :sid      => sid, 
                         :password => password,
