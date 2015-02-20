@@ -1,5 +1,0 @@
-select name as role,
-       decode(password,null,'NO','EXTERNAL','EXTERNAL','GLOBAL','GLOBAL','YES') as password_required,
-       decode(password,null,'NONE','EXTERNAL','EXTERNAL','GLOBAL','GLOBAL','APPLICATION','APPLICATION','PASSWORD') as authentication_type
-from   user$
-where  type#=0 and name not in ('PUBLIC','_NEXT_USER')

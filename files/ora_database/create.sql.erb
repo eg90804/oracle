@@ -78,4 +78,27 @@ from v$parameter where name ='control_files';
 
 host echo &ctl_files >> <%= init_ora_file %>
 
+<% if ! is_cluster? %>
+Rem create the spfile & new init<SID>.ora to reflect to location of the spfile.
+<% if spfile_location %>
+create spfile='<%= spfile_location -%>/spfile<%= name -%>.ora' from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= spfile_location -%>/spfile<%= name -%>.ora'" > <%= init_ora_file %>
+<% else -%>
+create spfile from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= oracle_home -%>/dbs/spfile<%= name -%>.ora'" > <%= init_ora_file %>
+<% end -%>
+<% end -%>
+
+spool off
+
+Rem The minimal required catalog
+spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Catalog.log append
+@?/rdbms/admin/catalog
+@?/rdbms/admin/catproc
+<% if is_cluster? %>
+@?/rdbms/admin/catclust
+<% end -%>
+
 spool off
