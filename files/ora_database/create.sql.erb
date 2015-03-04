@@ -89,6 +89,10 @@ create spfile from pfile;
 host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
 host echo "spfile='<%= oracle_home -%>/dbs/spfile<%= name -%>.ora'" > <%= init_ora_file %>
 <% end -%>
+<% else -%>
+create spfile='<%= spfile_location -%>/spfile<%= name -%>.ora' from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= spfile_location -%>/spfile<%= name -%>.ora'" > <%= init_ora_file %>
 <% end -%>
 
 spool off
@@ -97,8 +101,11 @@ Rem The minimal required catalog
 spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Catalog.log append
 @?/rdbms/admin/catalog
 @?/rdbms/admin/catproc
-<% if is_cluster? %>
+<% if is_cluster? -%>
 @?/rdbms/admin/catclust
 <% end -%>
+
+shutdown immediate
+startup
 
 spool off

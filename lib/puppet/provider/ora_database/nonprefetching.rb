@@ -18,11 +18,11 @@ Puppet::Type.type(:ora_database).provide(:nonprefetching) do
   private
 
   def available_databases
-    #  old : Pathname.glob("#{resource.oracle_base}/admin/*").collect {|e| e.basename.to_s}
+    Pathname.glob("#{resource.oracle_base}/admin/*").collect {|e| e.basename.to_s}
     #
     # TODO: Discuss with Ed, why he prefers this. Atv this point in time it doesn't work consistently
     #
-    Pathname.glob("#{resource.oracle_home}/dbs/hc_#{resource.name}.dat").collect {|e|e.basename.to_s.scan(/hc_(.*).dat/).flatten}
+    # Pathname.glob("#{resource.oracle_home}/dbs/hc_#{resource.name}.dat").collect {|e|e.basename.to_s.scan(/hc_(.*).dat/).flatten}
     #
   end
 end
