@@ -1,6 +1,11 @@
 History
 ========
 
+04-03-2015  version 1.5.4
+--------------------------
+- Fixed spfile creation on RAC nodes
+- Made direct sql the default for sql commands. This is the first step in removing the daemon.
+
 07-02-2015  version 1.5.3
 --------------------------
 - Allow `ora_init_param` to manage ASM instances
