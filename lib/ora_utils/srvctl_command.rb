@@ -6,6 +6,18 @@ module OraUtils
     def initialize(options = {})
       super(:srvctl, options)
     end
+
+    def execute(arguments)
+      options = {:failonfail => true}
+      value = ''
+      command = "su - #{@os_user} -c \"#{command_string(arguments)}\""
+      within_time(@timeout) do
+        Puppet.debug "Executing #{@command} command: #{arguments} as #{os_user}"
+        value = Puppet::Util::Execution.execute(command, options)
+      end
+      value
+    end
+
   end
 end
 
