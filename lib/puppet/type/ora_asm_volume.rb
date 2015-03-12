@@ -37,7 +37,14 @@ module Puppet
       command_builder.add("voldelete -G #{diskgroup} #{volume_name}", :sid => sid)
     end
 
-    map_title_to_asm_sid([:diskgroup, :chop.to_proc], :volume_name) { /^((.*\:)?(@?.*?)?(\@.*?)?)$/}
+    def self.remove_colon_from_diskgroup
+      # Chopping of @ end using length of 16 because max length of SID is 16
+      lambda { |diskgroup| diskgroup.nil? ? (fail ArgumentError, 'invalid diskgroup in title') : diskgroup.chop} 
+    end
+
+
+    map_title_to_asm_sid([:diskgroup, remove_colon_from_diskgroup], :volume_name) { /^((.*\:)?(@?.*?)?(\@.*?)?)$/}
+
     #
     # property  :new_property  # For every property and parameter create a parameter file
     #

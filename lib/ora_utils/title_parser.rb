@@ -17,28 +17,36 @@ module OraUtils
 
     def parse_database_name
       lambda do |name|
-        groups      = name.scan(/^((@?.*?)?(\@.*?)?)$/).flatten
-        sid         = parse_database_sid.call(groups.last)
-        object_name = groups[1]
-        if self.name != :ora_exec && object_name.include?('/')
-          Puppet.deprecation_warning("Using 'sid/name' in title is deprecated. Use 'name@sid'.")
-          sid, object_name = object_name.scan(/^(.*)\/(.*)$/).flatten.flatten
+        begin
+          groups      = name.scan(/^((@?.*?)?(\@.*?)?)$/).flatten
+          sid         = parse_database_sid.call(groups.last)
+          object_name = groups[1]
+          if self.name != :ora_exec && object_name.include?('/')
+            Puppet.deprecation_warning("Using 'sid/name' in title is deprecated. Use 'name@sid'.")
+            sid, object_name = object_name.scan(/^(.*)\/(.*)$/).flatten.flatten
+          end
+          "#{object_name}@#{sid}"
+        rescue
+          fail ArgumentError, 'a failure in parsing the database object title. Check the documentation for the correct syntax of the title'
         end
-        "#{object_name}@#{sid}"
       end
     end
 
     # TODO: Check how we can remove this duplication
     def parse_asm_name
       lambda do |name|
-        groups      = name.scan(/^((@?.*?)?(\@.*?)?)$/).flatten
-        sid         = parse_asm_sid.call(groups.last)
-        object_name = groups[1]
-        if self.name != :ora_exec && object_name.include?('/')
-          Puppet.deprecation_warning("Using 'sid/name' in title is deprecated. Use 'name@sid'.")
-          sid, object_name = object_name.scan(/^(.*)\/(.*)$/).flatten.flatten
+        begin
+          groups      = name.scan(/^((@?.*?)?(\@.*?)?)$/).flatten
+          sid         = parse_asm_sid.call(groups.last)
+          object_name = groups[1]
+          if self.name != :ora_exec && object_name.include?('/')
+            Puppet.deprecation_warning("Using 'sid/name' in title is deprecated. Use 'name@sid'.")
+            sid, object_name = object_name.scan(/^(.*)\/(.*)$/).flatten.flatten
+          end
+          "#{object_name}@#{sid}"
+        rescue
+          fail ArgumentError, 'a failure in parsing the asm object title. Check the documentation for the correct syntax of the title'
         end
-        "#{object_name}@#{sid}"
       end
     end
 
