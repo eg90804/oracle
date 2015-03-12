@@ -90,6 +90,7 @@ host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
 host echo "spfile='<%= oracle_home -%>/dbs/spfile<%= name -%>.ora'" > <%= init_ora_file %>
 <% end -%>
 <% else -%>
+host echo "cluster_database=true" >> <%= init_ora_file %>
 create spfile='<%= spfile_location -%>/<%= name -%>/spfile<%= name -%>.ora' from pfile;
 host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
 host echo "spfile='<%= spfile_location -%>/<%= name -%>/spfile<%= name -%>.ora'" > <%= init_ora_file %>

@@ -28,16 +28,15 @@ module Puppet
         add_oratab_entry
         create_ora_pwd_file(command_builder)
 
-        if is_cluster?
-          register_database(command_builder)
-          add_instances(command_builder)
-          disable_database(command_builder)
-        end
-
         create_stage_1
         create_stage_2
         execute_stage_1( command_builder)
         execute_stage_2( command_builder)
+        if is_cluster?
+          register_database(command_builder)
+          add_instances(command_builder)
+          start_database(command_builder)
+        end
         nil
 
       rescue => e
@@ -156,6 +155,11 @@ module Puppet
         File.open(path, 'w') { |f| f.write(content) }
         owned_by_oracle(path)
       end
+    end
+
+    def start_database(command_builder)
+      # command_builder.add("stop database -d #{name}", :srvctl, :sid => @dbname)
+      command_builder.add("start database -d #{name}", :srvctl, :sid => @dbname)
     end
 
     def register_database(command_builder)
