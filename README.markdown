@@ -269,14 +269,14 @@ You can use the `unless` parameter to only execute the statement in certain stat
 You can also execute a script.
 
 ```puppet
-ora_exec{"instance/@/tmp/do_some_stuff.sql":
+ora_exec{"@/tmp/do_some_stuff.sql@sid":
   username  => 'app_user',
   password  => 'password,'
   logoutput => on_failure,  # can be true, false or on_failure
 }
 ```
 
-This statement will run the sqlscript `/tmp/do_some_stuff.sql` on the instance named `instance`. Use the `unless` parameter to just 
+This statement will run the sqlscript `/tmp/do_some_stuff.sql` on the sid named `sid`. Use the `unless` parameter to just 
 
 When you don't specify the username and the password, the type will connect as `sysdba`.
 
