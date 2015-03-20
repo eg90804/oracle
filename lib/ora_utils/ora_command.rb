@@ -33,11 +33,11 @@ module OraUtils
     end
 
     def command_string(arguments = '')
-      "export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv; #{@command} #{arguments}"
+      "su - #{@os_user} -c \"export ORACLE_SID=#{@sid};export ORAENV_ASK=NO;. oraenv; #{@command} #{arguments}\""
     end
 
     def execute(arguments)
-      options = {:uid => @os_user, :failonfail => true}
+      options = {:failonfail => true}
       value = ''
       within_time(@timeout) do
         Puppet.debug "Executing #{@command} command: #{arguments} on #{@sid} as #{os_user}, connected as #{username}"

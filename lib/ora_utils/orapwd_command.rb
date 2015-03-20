@@ -10,7 +10,7 @@ module OraUtils
     def execute(arguments)
       options = {:failonfail => true}
       value = ''
-      command = "su - #{@os_user} -c \"#{command_string(arguments)}\""
+      command = command_string(arguments)
       within_time(@timeout) do
         Puppet.debug "Executing #{@command} command: #{arguments} as #{os_user}"
         value = Puppet::Util::Execution.execute(command, options)
