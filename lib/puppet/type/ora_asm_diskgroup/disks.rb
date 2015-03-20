@@ -5,28 +5,39 @@ newproperty(:disks) do
   desc "The state of the diskgroup"
 
   to_translate_to_resource do | raw_resource|
-    group_number = raw_resource.column_data('GROUP_NUMBER')
-    sid = raw_resource.column_data('SID')
+    @group_number = raw_resource.column_data('GROUP_NUMBER')
+    @sid = raw_resource.column_data('SID')
     oratab = OraUtils::OraTab.new
     sids = oratab.running_asm_sids
-    @failgroups ||= sql_on( sids, 'select failgroup, group_number, path, name from v$asm_disk')
-    failgroups_for(group_number, sid)
+    @disks ||= sql_on( sids, 'select failgroup, group_number, path, name from v$asm_disk')
+    Hash[failgroups.collect { |fg| [fg, disks_in_fg(fg)]}]
   end
 
-  def self.failgroups_for(group_number, sid)
-    translate(@failgroups.select{|q| q['GROUP_NUMBER'] == group_number && q['SID'] == sid})
+  def self.failgroups
+    @disks.collect do |entry|
+      if current_diskgroup?(entry)
+        entry['FAILGROUP']
+      else
+        nil
+      end
+    end.compact
   end
 
-  def self.translate(raw)
-    return_value = {}
-    raw.each do |entry|
-      return_value.merge!(failgroup(entry) => {'diskname' => entry['NAME'], 'path' => entry['PATH']})
+  def self.disks_in_fg(fg)
+    @disks.reduce([]) do |value, disk|
+      if disk['FAILGROUP'] == fg && current_diskgroup?(disk)
+        value << {'diskname' => disk['NAME'], 'path' => disk['PATH']}
+      end
+      value
     end
-    return_value
   end
 
   def self.failgroup(raw)
     raw['FAILGROUP']
+  end
+
+  def self.current_diskgroup?(entry)
+    entry['GROUP_NUMBER'] == @group_number && entry['SID'] == @sid
   end
 
 end
