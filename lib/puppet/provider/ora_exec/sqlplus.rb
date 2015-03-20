@@ -17,7 +17,10 @@ Puppet::Type.type(:ora_exec).provide(:sqlplus) do
       statement = template(script_name, binding)
     end
     sid = sid_from_resource
-    output = sql statement, :username => resource.username, :password => resource.password, :sid => sid
+    options = {:sid => sid}
+    options.merge!( :username => resource.username) unless resource.username.nil?
+    options.merge!( :password => resource.password) unless resource.password.nil?
+    output = sql statement, options
     Puppet.debug(output) if resource.logoutput == :true
   end
 
