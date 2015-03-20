@@ -6,7 +6,7 @@ require 'ora_utils/sqlplus_command'
 module OraUtils
   class Sql
 
-    attr_reader :sid, :username, :password, :os_user, :timeout, :daemonized
+    attr_reader :sid, :username, :password, :os_user, :timeout
 
     def initialize(options = {})
       @command     = SqlplusCommand.new( options)

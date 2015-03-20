@@ -57,7 +57,7 @@ module Puppet
         remove_database_registration( command_builder)
       end
       statement = template('puppet:///modules/oracle/ora_database/destroy.sql.erb', binding)
-      command_builder.add(statement, :sid => name, :daemonized => false)
+      command_builder.add(statement, :sid => name)
       command_builder.after('', :remove_directories)
     end
 
@@ -192,12 +192,12 @@ module Puppet
     end
 
     def execute_stage_1( command_builder)
-      command_builder.add("@#{admin_scripts_path}/create", :sid => @dbname, :daemonized => false, :timeout => 0)
+      command_builder.add("@#{admin_scripts_path}/create", :sid => @dbname, :timeout => 0)
     end
 
     def execute_stage_2( command_builder)
       with_config_scripts do | script, _|
-        command_builder.after("@#{admin_scripts_path}/#{script}", :sid => @dbname, :daemonized => false, :timeout => 0)
+        command_builder.after("@#{admin_scripts_path}/#{script}", :sid => @dbname, :timeout => 0)
       end
     end
 

@@ -11,14 +11,10 @@ module OraUtils
       :password,
       :timeout,
       :username,
-      :daemonized
     ]
-
-    attr_reader :daemonized
 
     def initialize(options = {})
       super('sqlplus -S /nolog ', options, VALID_OPTIONS)
-      @daemonized = options.fetch(:daemonized) { false}
     end
 
     def execute(arguments)
