@@ -1,10 +1,11 @@
+whenever sqlerror exit sql.sqlcode
+
 <% if @password -%>
 connect <%= @username -%>/<%= @password -%>
 <% else -%>
 connect / as <%= @username -%>
 <% end %>
 
-whenever sqlerror exit sql.sqlcode
 set pagesize 0 emb on newpage none
 set newpage 0
 set space 0

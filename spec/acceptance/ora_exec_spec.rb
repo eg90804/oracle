@@ -9,6 +9,7 @@ describe 'ora_exec' do
       ora_user{'valid_user':
         ensure   => 'present',
         password => 'valid_user',
+        grants   => ['CREATE SESSION'],
       }
     EOS
   end
@@ -25,19 +26,16 @@ describe 'ora_exec' do
 
   end
 
-  #
-  # TODO: Fix the type so this fails
-  # context 'with an invalid username and password' do
-  #   it "fails to execute" do
-  #     apply_manifest(<<-EOS, :expect_failures => true)
-  #       ora_exec{'select * from tab':
-  #         username => 'invalid_user',
-  #         password => 'invalid_user',
-  #       }
-  #   EOS
-  #   end
-
-  # end
+    context 'with an invalid username and password' do
+    it "fails to execute" do
+      apply_manifest(<<-EOS, :expect_failures => true)
+        ora_exec{'select * from tab':
+          username => 'invalid_user',
+          password => 'invalid_user',
+        }
+    EOS
+    end
+  end
 
   context 'without a username and password' do
 
