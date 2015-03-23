@@ -16,7 +16,7 @@ newproperty(:statement) do
   def unless_value?
     sid = sid_from_resource
     options = {:sid => sid}
-    options.merge!(:username => resource.user) if resource.username 
+    options.merge!(:username => resource.username) if resource.username 
     options.merge!(:password => resource.password) if resource.password 
     rows = sql resource[:unless], options
     !rows.empty?
