@@ -1,6 +1,13 @@
-Deprecations
-============
+Deprecations and syntax changes
+===============================
 
+Version 1.6.0
+-------------
+`ora_asm_diskgroups` now needs an array of disks.
+
+
+Version 0.9.0
+-------------------
 As of version 0.9.0, using the SID at the beginning of a title, is deprecated:
 
 Change:

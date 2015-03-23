@@ -236,8 +236,12 @@ ora_asm_diskgroup {'REDO@+ASM1':
   compat_asm      => '11.2.0.0.0',
   compat_rdbms    => '11.2.0.0.0',
   disks           => {
-    'CONTROLLER1' => { 'diskname' => 'REDOVOL1', 'path' => 'ORCL:REDOVOL1'},
-    'CONTROLLER2' => { 'diskname' => 'REDOVOL2', 'path' => 'ORCL:REDOVOL2'},
+    'FAILGROUP1' => [
+      { 'diskname' => 'REDOVOL1', 'path' => 'ORCL:REDOVOL1'}
+    ,
+    'FAILGROUP2' => [
+      { 'diskname' => 'REDOVOL2', 'path' => 'ORCL:REDOVOL2'},
+    ]
   }
 }
 

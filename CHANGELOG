@@ -1,6 +1,13 @@
 History
 ========
 
+23-03-2015  version 1.6.0
+--------------------------
+- Removed the oracle daemon. Totaly. This makes the code easier to read.
+- some small changes in `ora_database` for RAC support.
+- improved error handling of sql code. This may lead to error's not seen before.
+- Support for multiple disks in ora_asm_diskgroups.
+
 04-03-2015  version 1.5.4
 --------------------------
 - Fixed spfile creation on RAC nodes
