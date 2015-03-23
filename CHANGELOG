@@ -1,6 +1,10 @@
 History
 ========
 
+23-03-2015  version 1.6.2
+--------------------------
+- Quick bugfix
+
 23-03-2015  version 1.6.1
 --------------------------
 - Small fix for `ora_exec` when `unless` is specfied without a username
