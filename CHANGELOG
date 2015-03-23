@@ -1,6 +1,11 @@
 History
 ========
 
+23-03-2015  version 1.6.1
+--------------------------
+- Small fix for `ora_exec` when `unless` is specfied without a username
+
+
 23-03-2015  version 1.6.0
 --------------------------
 - Removed the oracle daemon. Totaly. This makes the code easier to read.
