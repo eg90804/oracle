@@ -48,7 +48,9 @@ module Puppet
           sql "exec dbms_service.start_service('#{service_name}')", :sid => sid
         end
       end
-      nil
+      new_services = current_services << service_name
+      statement = set_services_command(new_services)
+      command_builder.add(statement, :sid => sid)
     end
     
     on_modify do | command_builder |
@@ -56,10 +58,14 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid
-      sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid
+      require 'ruby-debug'
+      debugger
+      new_services = current_services.delete_if {|e| e == service_name }
+      statement = set_services_command(new_services)
+      command_builder.add(statement, :sid => sid)
+      sql "whenever sqlerror continue; exec dbms_service.disconnect_session('#{service_name}')", :sid => sid
+      sql "whenever sqlerror continue; exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid
       sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid
-      nil
     end
 
     map_title_to_sid(:service_name) { /^((@?.*?)?(\@.*?)?)$/}
@@ -78,6 +84,15 @@ module Puppet
       def for_all_instances?
         instances == ['*']
       end
+
+      def set_services_command(services)
+        "alter system set service_names = '#{services.join('\',\'')}' scope=both"
+      end
+
+      def current_services
+        provider.class.instances.map(&:service_name)
+      end
+
 
   end
 end
