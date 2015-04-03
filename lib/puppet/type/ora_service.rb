@@ -32,25 +32,16 @@ module Puppet
 
 
     to_get_raw_resources do
-      sql_on_all_database_sids "select name from service$ where deletion_date is null"
+      sql_on_all_database_sids "select name from dba_services"
     end
 
     on_create do | command_builder |
-      sql "exec dbms_service.create_service('#{service_name}', '#{service_name}')", :sid => sid
-      if for_all_instances?
-        sql "exec dbms_service.start_service('#{service_name}', dbms_service.all_instances)", :sid => sid
+      if is_cluster?
+        register_cluster_service
       else
-        if is_cluster?
-          instances.each do |n|
-            sql "exec dbms_service.start_service('#{service_name}', '#{n}')", :sid => sid
-          end
-        else
-          sql "exec dbms_service.start_service('#{service_name}')", :sid => sid
-        end
+        register_service
       end
-      new_services = current_services << service_name
-      statement = set_services_command(new_services)
-      command_builder.add(statement, :sid => sid)
+      nil
     end
     
     on_modify do | command_builder |
@@ -58,14 +49,11 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      require 'ruby-debug'
-      debugger
-      new_services = current_services.delete_if {|e| e == service_name }
-      statement = set_services_command(new_services)
-      command_builder.add(statement, :sid => sid)
-      sql "whenever sqlerror continue; exec dbms_service.disconnect_session('#{service_name}')", :sid => sid
-      sql "whenever sqlerror continue; exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid
-      sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid
+      unpersist_service
+      disconnect_service
+      stop_service
+      delete_service
+      nil
     end
 
     map_title_to_sid(:service_name) { /^((@?.*?)?(\@.*?)?)$/}
@@ -74,8 +62,77 @@ module Puppet
     parameter :service_name
     parameter :sid
     property  :instances
+    parameter :aq_ha_notifications
+    parameter :cardinality
+    parameter :dtp
+    parameter :failover_delay
+    parameter :failover_method
+    parameter :failover_retries
+    parameter :failover_type
+    parameter :goal
+    parameter :lb_advisory
+    parameter :management_policy
+    parameter :network_number
+    parameter :prefered_instances
+    parameter :server_pool
+    parameter :service_role
+    parameter :taf_policy
+
+
 
     private
+
+      def register_cluster_service
+        create_cluster_service
+        start_cluster_service
+      end
+
+      def register_service
+        create_service
+        start_service
+        persist_service
+      end
+
+      def disconnect_service
+        sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
+      end
+
+      def stop_service
+        sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid, :failonsqlfail => false, :parse => false
+      end
+
+      def delete_service
+        sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
+      end
+
+      def create_cluster_service
+        srvctl "add service -d #{sid} -s #{service_name}  -r #{instances.join(',')} -j LONG -B THROUGHPUT"
+      end
+
+      def start_cluster_service
+        srvctl "start service -d #{sid} -s #{service_name}"
+      end
+
+      def create_service
+        sql "exec dbms_service.create_service('#{service_name}', '#{service_name}')", :sid => sid
+      end
+
+      def start_service
+        sql "exec dbms_service.start_service('#{service_name}')", :sid => sid
+      end
+
+      def unpersist_service
+        current_services.delete(service_name)
+        statement = set_services_command(current_services)
+        sql statement, :sid => sid
+      end
+
+
+      def persist_service
+        new_services = current_services << service_name
+        statement = set_services_command(new_services)
+        sql statement, :sid => sid
+      end
 
       def is_cluster?
         instances.count > 0
@@ -90,9 +147,17 @@ module Puppet
       end
 
       def current_services
-        provider.class.instances.map(&:service_name)
+        @current_services ||= provider.class.instances.map(&:service_name).dup
       end
 
 
   end
 end
+
+
+
+
+
+
+
+

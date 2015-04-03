@@ -11,9 +11,13 @@ module OraUtils
       :password,
       :timeout,
       :username,
+      :failonsqlfail,   # Don't fail if the sql fails
+      :parse            # Parse the output as cvs. We need this. This is default true
     ]
 
     def initialize(options = {})
+      @failonsqlfail  = options.fetch(:failonsqlfail) { true}
+      @parse          = options.fetch(:parse) { true}
       super('sqlplus -S /nolog ', options, VALID_OPTIONS)
     end
 
@@ -33,7 +37,7 @@ module OraUtils
       Puppet.debug "Executing sql statement :\n #{command}"
       script = command_file( template('puppet:///modules/oracle/shared/execute.sql.erb', binding))
       execute "@#{script}"
-      File.read(output_file)
+      @parse ? File.read(output_file) : ''
     end
 
     private

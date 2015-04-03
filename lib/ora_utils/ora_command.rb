@@ -20,7 +20,7 @@ module OraUtils
       check_options( options )
       @command        = command
       @oratab         = OraUtils::OraTab.new
-      @password       = options[:password] # may be emptu
+      @password       = options[:password] # may be empty
       @timeout        = options.fetch(:timeout) { DEFAULT_TIMEOUT}
       @sid            = options.fetch(:sid) { raise ArgumentError, "you need to specify a sid for oracle access"}
       if asm_sid?
@@ -77,8 +77,6 @@ module OraUtils
     def default_ora_user
       ENV[ORA_OS_USER_NAME] ||  Facter.value(ORA_OS_USER_NAME) || 'oracle'
     end
-
-
 
   end
 end

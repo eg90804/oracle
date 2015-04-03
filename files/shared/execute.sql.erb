@@ -6,6 +6,12 @@ connect <%= @username -%>/<%= @password -%>
 connect / as <%= @username -%>
 <% end %>
 
+<% if @failonsqlfail -%>
+whenever sqlerror exit sql.sqlcode
+<% else -%>
+whenever sqlerror continue
+<% end -%>
+
 set pagesize 0 emb on newpage none
 set newpage 0
 set space 0
