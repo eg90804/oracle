@@ -4,6 +4,7 @@ $:.unshift(Pathname.new(__FILE__).dirname.parent.parent.parent.parent + 'easy_ty
 require 'easy_type'
 require 'ora_utils/oracle_access'
 require 'ora_utils/title_parser'
+require 'ora_utils/commands'
 
 
 module Puppet
@@ -28,11 +29,10 @@ module Puppet
 
     ensurable
 
-    set_command(:sql)
-
+    set_command([:sql, :srvctl])
 
     to_get_raw_resources do
-      sql_on_all_database_sids "select name from dba_services"
+      sql_on_all_database_sids "select name, clb_goal as clb_g from dba_services"
     end
 
     on_create do | command_builder |
@@ -62,21 +62,25 @@ module Puppet
     parameter :service_name
     parameter :sid
     property  :instances
-    parameter :aq_ha_notifications
-    parameter :cardinality
-    parameter :dtp
-    parameter :failover_delay
-    parameter :failover_method
-    parameter :failover_retries
-    parameter :failover_type
-    parameter :goal
-    parameter :lb_advisory
-    parameter :management_policy
-    parameter :network_number
     parameter :prefered_instances
-    parameter :server_pool
-    parameter :service_role
-    parameter :taf_policy
+
+    #
+    # This will be implemented later
+    # TODO: Add the implementation for these options
+    # property  :clb_goal
+    # parameter :aq_ha_notifications
+    # parameter :cardinality
+    # parameter :dtp
+    # parameter :failover_delay
+    # parameter :failover_method
+    # parameter :failover_retries
+    # parameter :failover_type
+    # parameter :lb_advisory
+    # parameter :management_policy
+    # parameter :network_number
+    # parameter :server_pool
+    # parameter :service_role
+    # parameter :taf_policy
 
 
 
