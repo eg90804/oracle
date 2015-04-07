@@ -5,7 +5,6 @@ newproperty(:instances, :array_matching => :all) do
 
   desc = %q{A list of instance names to activate the service on.}
 
-  defaultto []
 
 #
 # Make sure it is always an array

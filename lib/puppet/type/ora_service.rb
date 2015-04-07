@@ -6,12 +6,12 @@ require 'ora_utils/oracle_access'
 require 'ora_utils/title_parser'
 require 'ora_utils/commands'
 
-
 module Puppet
   newtype(:ora_service) do
     include EasyType
     include ::OraUtils::OracleAccess
     extend ::OraUtils::TitleParser
+    include ::OraUtils::Commands
 
     desc %q{
       This resource allows you to manage a service in an Oracle database.
@@ -29,17 +29,18 @@ module Puppet
 
     ensurable
 
-    set_command([:sql, :srvctl])
+    set_command(:sql)
+
 
     to_get_raw_resources do
-      sql_on_all_database_sids "select name, clb_goal as clb_g from dba_services"
+      sql_on_all_database_sids "select name from dba_services"
     end
 
     on_create do | command_builder |
-      if is_cluster?
-        register_cluster_service
+      if is_cluster? 
+        create_cluster_service
       else
-        register_service
+        create_service
       end
       nil
     end
@@ -49,10 +50,12 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      unpersist_service
       disconnect_service
-      stop_service
-      delete_service
+      if is_cluster?
+        remove_cluster_service
+      else
+        remove_service
+      end
       nil
     end
 
@@ -83,67 +86,50 @@ module Puppet
     # parameter :taf_policy
 
 
-
     private
-
-      def register_cluster_service
-        create_cluster_service
-        start_cluster_service
-      end
-
-      def register_service
-        create_service
-        start_service
-        persist_service
-      end
 
       def disconnect_service
         sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
       end
 
-      def stop_service
-        sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid, :failonsqlfail => false, :parse => false
-      end
 
       def delete_service
         sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
       end
 
       def create_cluster_service
-        srvctl "add service -d #{sid} -s #{service_name}  -r #{instances.join(',')} -j LONG -B THROUGHPUT"
-      end
-
-      def start_cluster_service
-        srvctl "start service -d #{sid} -s #{service_name}"
+        srvctl "add service -d #{dbname} -s #{service_name}  -r #{cluster_instances.join(',')}", :sid => sid
+        srvctl "start service -d #{dbname} -s #{service_name}", :sid => sid
       end
 
       def create_service
-        sql "exec dbms_service.create_service('#{service_name}', '#{service_name}')", :sid => sid
-      end
-
-      def start_service
-        sql "exec dbms_service.start_service('#{service_name}')", :sid => sid
-      end
-
-      def unpersist_service
-        current_services.delete(service_name)
-        statement = set_services_command(current_services)
-        sql statement, :sid => sid
-      end
-
-
-      def persist_service
         new_services = current_services << service_name
         statement = set_services_command(new_services)
         sql statement, :sid => sid
       end
 
-      def is_cluster?
-        instances.count > 0
+
+      def remove_service
+        current_services.delete(service_name)
+        statement = set_services_command(current_services)
+        sql statement, :sid => sid
+        sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
       end
 
-      def for_all_instances?
-        instances == ['*']
+      def remove_cluster_service
+        srvctl "stop service -d #{dbname} -s #{service_name}", :sid => sid
+        sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
+        srvctl "remove service -d #{dbname} -s #{service_name} -i #{cluster_instances.join(',')}", :sid => sid
+      end
+
+      def is_cluster?
+        sql('select parallel as par from v$instance', :sid => sid).first['PAR'] == 'YES'
+      end
+
+      def cluster_instances
+        instances.nil? || instancles.count == 0 ?
+          sql('select INSTANCE_NAME from gv$instance', :sid => sid).collect {|e| e['INSTANCE_NAME']} :
+          instances          
       end
 
       def set_services_command(services)
@@ -154,10 +140,12 @@ module Puppet
         @current_services ||= provider.class.instances.map(&:service_name).dup
       end
 
+      def dbname
+        sid.chop
+      end
 
   end
 end
-
 
 
 
