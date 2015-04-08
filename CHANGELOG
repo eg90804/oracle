@@ -1,6 +1,10 @@
 History
 ========
 
+08-04-2015  version 1.6.4
+--------------------------
+- Now realy works on RAC...
+
 04-04-2015  version 1.6.3
 --------------------------
 - ora_service now works on RAC systems
