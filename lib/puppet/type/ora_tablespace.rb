@@ -23,7 +23,7 @@ module Puppet
     end
 
     on_create do | command_builder |
-      base_command = "create #{ts_type} #{contents} tablespace \"#{tablespace_name}\""
+      base_command = "create #{ts_type} #{ts_contents} tablespace \"#{tablespace_name}\""
       base_command << " segment space management #{segment_space_management}" if segment_space_management
       base_command
       command_builder.add(base_command, :sid => sid)
@@ -60,6 +60,11 @@ module Puppet
     def ts_type
       (self['bigfile'] == :yes) ? 'bigfile' : ''
     end
+
+    def ts_contents
+      (self['contents'] != :permanent) ? self['contents'] : ''
+    end
+
 
   end
 end
