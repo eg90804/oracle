@@ -32,4 +32,46 @@ describe 'ora_tablespace' do
     }
     EOS
   }
+
+  #
+  # Tests for changing auto extend properties
+  #
+  it_behaves_like "an ensurable resource", {
+    :resource_name      => 'ora_tablespace',
+    :present_manifest   => <<-EOS,
+
+    ora_tablespace{test: 
+        ensure             => 'present',
+        datafile           => 'test2.dbf',
+        contents           => permanent,
+        bigfile            => 'yes',
+        size               => 5M,
+        logging            => 'yes',
+        autoextend         => 'off',
+      }
+
+    EOS
+    :change_manifest   => <<-EOS,
+
+    ora_tablespace{test: 
+        ensure             => 'present',
+        datafile           => 'test2.dbf',
+        contents           => permanent,
+        bigfile            => 'yes',
+        size               => 5M,
+        logging            => 'yes',
+        autoextend         => 'on',
+        next               => 1M,
+        max_size           => 10M,
+      }
+
+    EOS
+    :absent_manifest    => <<-EOS,
+    ora_tablespace{test: 
+      ensure    =>'absent',
+    }
+    EOS
+  }
+
+
 end

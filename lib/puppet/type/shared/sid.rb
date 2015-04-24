@@ -18,5 +18,9 @@ end
 
 def sid
   oratab = OraUtils::OraTab.new
-  self[:sid].empty? ? oratab.default_database_sid : self[:sid]
+  begin
+   self[:sid].empty? ? oratab.default_database_sid : self[:sid]
+  rescue NoMethodError
+    oratab.default_database_sid
+  end
 end

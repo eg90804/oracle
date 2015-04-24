@@ -18,7 +18,12 @@ newproperty(:autoextend) do
     end
   end
 
-  on_apply do | command_builder|
+  on_modify do | command_builder|
+    command_builder.add "alter tablespace #{resource[:tablespace_name]} autoextend #{resource[:autoextend]}", :sid => sid 
+    nil
+  end
+
+  on_create do | command_builder|
     "autoextend #{resource[:autoextend]}"
   end
 end

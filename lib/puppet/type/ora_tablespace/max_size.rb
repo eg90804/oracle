@@ -24,7 +24,12 @@ newproperty(:max_size) do
   end
 
   on_apply do | command_builder|
-  	"maxsize #{should}" if resource[:autoextend] == :on
+    if resource[:autoextend] == :on
+      "maxsize #{value}"
+    else
+      Puppet.warning "property maxsize changed on ora_tablespace[#{resource[:name]}], but autoextend is off. Change has no effect. "
+      nil
+    end
   end
 
 end

@@ -30,7 +30,7 @@ module Puppet
     end
 
     on_modify do | command_builder |
-      command_builder.add("alter tablespace \"#{tablespace_name}\"", :sid => sid)
+      # Allow individual properties to do there stuff
     end
 
     on_destroy do | command_builder |
@@ -45,9 +45,9 @@ module Puppet
 
     parameter :timeout
     property  :bigfile
-    parameter :datafile
-    property  :size
     group(:autoextend_group) do
+      parameter :datafile
+      property  :size
       property  :autoextend
       property  :next
       property  :max_size
