@@ -16,7 +16,7 @@ newproperty(:logging) do
 
   on_modify do | command_builder|
     logging = (resource[:logging] == :yes) ? "logging" : "nologging"
-    command_builder.after "alter tablespace #{resource[:name]} #{logging}", :sid => sid 
+    command_builder.after "alter tablespace #{resource[:tablespace_name]} #{logging}", :sid => sid 
   end
 
   on_create do | command_builder|
