@@ -95,7 +95,7 @@ describe tablespace do
         end
 
         it "returns 'logging'" do
-          expect(attribute.on_apply(nil)).to eq 'logging'
+          expect(attribute.on_create(nil)).to eq 'logging'
         end
       end
 
@@ -106,7 +106,7 @@ describe tablespace do
         end
 
         it "returns 'nologging'" do
-          expect(attribute.on_apply(nil)).to eq 'nologging'
+          expect(attribute.on_create(nil)).to eq 'nologging'
         end
       end
     end
@@ -148,13 +148,13 @@ describe tablespace do
 
   describe ':size' do
 
+
     it_behaves_like 'an easy_type attribute', {
       :attribute          => :size,
       :result_identifier  => 'BYTES',
       :raw_value          => '1000',
       :test_value         => 1000,
-      :create_text        => 'datafile size 1000',
-      :modify_text        => 'resize 1000'
+      :create_text        => 'size 1000'
     }
   end
 
@@ -183,7 +183,7 @@ describe tablespace do
       :result_identifier  => 'EXTENT_MAN',
       :raw_value          => 'LOCAL',
       :test_value         => :local,
-      :apply_text         => 'extent management local'
+      :create_text         => 'extent management local'
     }
 
   end
@@ -219,7 +219,7 @@ describe tablespace do
       :result_identifier  => 'AUT',
       :raw_value          => 'YES',
       :test_value         => :on,
-      :apply_text         => "autoextend on"
+      :create_text         => "autoextend on"
     }
 
   end
@@ -227,25 +227,31 @@ describe tablespace do
 
   describe ':next' do
 
+    before do
+      @resource[:autoextend] = :on
+    end
+
     it_behaves_like 'an easy_type attribute', {
       :attribute          => :next,
       :raw_resource       => { 'BLOCK_SIZE' => '1024', 'INCREMENT_BY' => '100'},
-      :test_value         => 102400
-      # :apply_text         => 'next 102400'
-      # TODO: add tests to see if this get's added when extendmanagement is on
+      :test_value         => 102400,
+      :apply_text         => 'next 102400'
     }
 
   end
 
   describe ':max_size' do
 
+    before do
+      @resource[:autoextend] = :on
+    end
+
     it_behaves_like 'an easy_type attribute', {
       :attribute          => :max_size,
       :result_identifier  => 'MAX_SIZE',
       :raw_value          => '1000000.123',
-      :test_value         => 1000000
-      # :apply_text         => "maxsize 1000000"
-      # TODO: add tests to see if this get's added when extendmanagement is on
+      :test_value         => 1000000,
+      :apply_text         => "maxsize 1000000"
     }
 
   end
