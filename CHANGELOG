@@ -1,6 +1,11 @@
 History
 ========
 
+24-04-2015  version 1.6.5
+--------------------------
+- Fixed changing tablespaces
+- Added support for Puppet 4
+
 08-04-2015  version 1.6.4
 --------------------------
 - Now realy works on RAC...
