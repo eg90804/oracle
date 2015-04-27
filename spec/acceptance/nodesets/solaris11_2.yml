@@ -1,0 +1,11 @@
+HOSTS:
+  solaris11-2:
+    roles:
+      - master
+    platform: solaris-11-x86_64
+    box : hajee/solaris11_2-x86_64
+    hypervisor: vagrant
+CONFIG:
+  vagrant_memsize: 3072
+  log_level: verbose
+  type: foss

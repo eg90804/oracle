@@ -1,0 +1,11 @@
+HOSTS:
+  oraclelinux-65-x64:
+    roles:
+      - master
+    platform: el-6-x86_64
+    box : hajee/oraclelinux-6.5-x86_64
+    hypervisor: vagrant
+CONFIG:
+  vagrant_memsize: 3072
+  log_level: verbose
+  type: foss
