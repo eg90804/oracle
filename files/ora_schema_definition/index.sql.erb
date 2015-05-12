@@ -1,0 +1,1 @@
+select * from schema_version where upper(application) = '<%= resource[:schema_name] -%>' order by version

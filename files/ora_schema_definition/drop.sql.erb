@@ -1,0 +1,50 @@
+SET NEWPAGE 0
+SET SPACE 0
+SET LINESIZE 120
+SET PAGESIZE 0
+SET ECHO OFF
+SET FEEDBACK OFF
+SET HEADING OFF
+SET MARKUP HTML OFF
+
+SPOOL /tmp/dropSchema.sql
+
+SELECT  'EXEC DBMS_AQADM.STOP_QUEUE('''|| uq.name ||''');' 
+FROM    user_queues uq;
+
+SELECT 'EXEC DBMS_AQADM.DROP_QUEUE('''|| uq.name ||''');' 
+FROM  user_queues uq;
+
+SELECT 'EXEC DBMS_AQADM.DROP_QUEUE_TABLE(''' || uqt.queue_table ||''', true);'  
+FROM  user_queue_tables uqt;
+
+SELECT 'DROP '|| uo.object_type || ' '|| uo.object_name|| ' CASCADE CONSTRAINTS;'
+FROM  user_objects uo
+WHERE uo.object_type = 'TABLE'
+AND     uo.object_name NOT IN (SELECT uqt.queue_Table 
+                 FROM user_queue_tables uqt)
+AND     uo.object_name NOT LIKE 'BIN$%';
+
+SELECT 'DROP '||uo.object_type ||' '|| uo.object_name||';'
+FROM  user_objects uo
+WHERE uo.object_type IN('VIEW', 'PACKAGE', 'SEQUENCE', 'PROCEDURE')
+AND     UO.object_name NOT LIKE 'AQ$%';
+
+SELECT 'EXEC DBMS_JOB.REMOVE('||to_char(uj.job)||');'
+FROM  user_jobs uj;
+
+SELECT 'COMMIT;'
+FROM  dual;
+
+SELECT  'PURGE RECYCLEBIN;'
+FROM  dual;
+
+SPOOL OFF
+SET FEEDBACK ON  
+SET VERIFY ON
+SET TERM ON 
+@/tmp/dropSchema.sql
+host rm /tmp/dropSchema.sql
+
+exit;
+
