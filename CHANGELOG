@@ -1,6 +1,11 @@
 History
 ========
 
+13-05-2015  version 1.6.6
+--------------------------
+- Fixed creating a tablespace when no datafile is specfied
+
+
 24-04-2015  version 1.6.5
 --------------------------
 - Fixed changing tablespaces
