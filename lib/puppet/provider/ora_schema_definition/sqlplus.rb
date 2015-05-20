@@ -14,7 +14,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
 
   def self.prefetch(resources)
     resources.each do |name, resource|
-      options = options_for(resource[:schema_name], resource[:password], resource[:sid])
+      options = options_for(resource[:schema_name], resource[:password], sid_from(resource))
       destroy(resource) if resource[:reinstall] == :true
       if version_table_exists?(options)
         statement = template('puppet:///modules/oracle/ora_schema_definition/index.sql.erb', binding)
@@ -66,7 +66,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
 
   def self.destroy(resource)
     Puppet.info 'deleting all schema information'
-    options = options_for(resource[:schema_name], resource[:password], resource[:sid])
+    options = options_for(resource[:schema_name], resource[:password], sid_from(resource))
     options[:parse] = false
     statement = template('puppet:///modules/oracle/ora_schema_definition/drop.sql.erb', binding)
     sql(statement, options)
@@ -86,7 +86,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
       statements << yield(script) << ";\n"
       statements << "commit;\n"
     end
-    options = self.class.options_for(resource[:schema_name], resource[:password], resource[:sid])
+    options = self.class.options_for(resource[:schema_name], resource[:password], sid_from(resource))
     sql statements, options
   end
 
@@ -124,7 +124,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
   end
 
   def ensure_version_table
-    options = self.class.options_for(resource[:schema_name], resource[:password], resource[:sid])
+    options = self.class.options_for(resource[:schema_name], resource[:password], sid_from(resource))
     create_version_table(options) unless self.class.version_table_exists?(options)
   end
 

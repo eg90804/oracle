@@ -13,7 +13,7 @@ Puppet::Type.type(:ora_record).provide(:sqlplus) do
 
   def self.prefetch(resources)
     resources.each do |name, resource|
-      options = options_for(resource[:username], resource[:password], resource[:sid])
+      options = options_for(resource[:username], resource[:password], sid_from(resource))
       columns = resource.data.keys.collect{|c| "#{c}||'#{' '.*c.length}' as #{c}"}
       statement = "select #{columns.join(',')} from #{resource[:table_name]} where #{resource[:key_name]} = '#{resource[:key_value]}'"
       records = sql(statement, options)

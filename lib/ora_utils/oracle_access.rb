@@ -115,8 +115,13 @@ module OraUtils
     end
 
     def sid_from_resource
+      sid_from(resource)
+    end
+
+
+    def sid_from(source)
       oratab = OraUtils::OraTab.new
-      resource.sid.empty? ? oratab.default_database_sid : resource.sid
+      source.sid.empty? ? oratab.default_database_sid : source.sid
     end
 
   end
