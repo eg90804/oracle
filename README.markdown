@@ -65,7 +65,9 @@ The module contains the following types:
 - `ora_database`
 - `ora_init_params`
 - `ora_listener`
+- `ora_record`
 - `ora_role`
+- `ora_schema_definition`
 - `ora_service`
 - `ora_tablespace`
 - `ora_thread`
@@ -283,6 +285,51 @@ ora_exec{"@/tmp/do_some_stuff.sql@sid":
 This statement will run the sqlscript `/tmp/do_some_stuff.sql` on the sid named `sid`. Use the `unless` parameter to just 
 
 When you don't specify the username and the password, the type will connect as `sysdba`.
+
+### ora_record
+
+With `ora_record` you can manage individual records in a database.  It is **NOT** intended to insert large quantities of records into a database, but it is intended to use puppet to manage configuration information stored in database tables. An example:
+
+```puppet
+ora_record{'SUBSCRIPTION':
+  ensure     => 'updated',
+  table_name => 'SUBSCRIPTION',
+  username   => 'APP',
+  password   => 'APP',
+  key_name   => 'SUBSCRIPTIONID',
+  key_value  => '19',
+  data       => {
+      'CUSTOMER_NAME'               => 'Favorite customer',
+      'TYPE_OF_SUBSCRIPTION'        => 'REGULAR'
+    }
+}
+```
+This puppet definition will make sure a records with `SUBSCRIPTIONID` `19`  exists in the database. The content is taken from the property `DATA`. Because `ensure` is specified as `updated`, every time puppet run's it will change the content of the database records based on your definition. This may not be what you want. Sometimes you just want to make sure an initial record exists with these values, but after the user has changed the values, you want to keep the changes. `ora_record` supports this behaviour by setting `ensure` to `present`. This will make sure a record with the specified key and content exists, but it will not look at the data part.
+
+### ora_schema_definition
+
+`ora_schema_definition` allows you to manage schema definitions for your application. Here's an example:
+
+```puppet
+ora_schema_definition{'app@test':
+  ensure      => '2.3.0',
+  source_path => '/vagrant',
+  parameters => {
+    app_data_tablespace  => 'USERS',
+    app_index_tablespace => 'USERS',
+  }
+}
+```
+Internally this type creates or updates a table containing the latest version of the schema. It uses update and downgrade sqlscripts. These sqlscripts must be available in the directory specified by `source_path`. upgrade scripts in the subdirectory `upgrades` and downgrade scripts in the subdirectory `downgrades`. Each script must have the following format:
+
+  `sequence_name_version_description.sql`
+
+where:
+
+- `sequence` is a four digit incremental sequence number starting at `0000`
+- `name` is a character string name
+- `version` is is number in the form `x.y.z` where all are numbers
+- `description` is a description of the content.
 
 ###ora_thread
 
