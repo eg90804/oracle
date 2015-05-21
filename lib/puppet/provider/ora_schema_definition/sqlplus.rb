@@ -45,7 +45,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
   end
 
   def upgrade_to(version)
-    check_source_path
+    check_upgrade_path
     ensure_version_table
     scripts = scripts_for_upgrade(self.ensure, version)
     execute_scripts(scripts) do |script|
@@ -55,7 +55,7 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
   end
 
   def downgrade_to(version)
-    check_source_path
+    check_downgrade_path
     ensure_version_table
     scripts = scripts_for_downgrade(self.ensure, version)
     execute_scripts(scripts) do | script|
@@ -135,10 +135,12 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
     sql(statement, options)
   end
 
-  def check_source_path
-    fail "source_path #{resource[:source_path]} doesn't contain a downgrades folder" unless File.exists?("#{resource[:source_path]}/downgrades")
+  def check_upgrade_path
     fail "source_path #{resource[:source_path]} doesn't contain a upgrades folder" unless File.exists?("#{resource[:source_path]}/upgrades")
   end
 
+  def check_downgrade_path
+    fail "source_path #{resource[:source_path]} doesn't contain a downgrades folder" unless File.exists?("#{resource[:source_path]}/downgrades")
+  end
 
 end
