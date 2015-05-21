@@ -1,6 +1,10 @@
 History
 ========
 
+21-05-2015  version 1.7.1
+--------------------------
+- Small fixes to ora_schema_definition and ora_record. 
+
 20-05-2015  version 1.7.0
 --------------------------
 - Added ora_schema_definition type. This type helps in managing the table defintions of your applications
