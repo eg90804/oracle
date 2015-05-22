@@ -83,6 +83,8 @@ Puppet::Type.type(:ora_schema_definition).provide(:sqlplus) do
       statements << "REM\n"
       statements << File.read(script)
       statements << "\n"
+      statements << "commit;\n"
+      statements << "connect #{resource[:schema_name]}/#{resource[:password]}\n"
       statements << yield(script) << ";\n"
       statements << "commit;\n"
     end
