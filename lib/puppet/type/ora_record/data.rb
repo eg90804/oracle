@@ -18,7 +18,12 @@ newproperty(:data) do
     resource[:ensure] == :updated ? is == should : true
   end
 
-
+  def validate(value)
+    fail "Ora_record['#{resource[:name]}'] data keyword must be passed a Hash" unless value.is_a?(Hash)
+    value.keys.each do | key|
+      fail "Ora_record['#{resource[:name]}'] data keyword must be passed a Hash with string keys" unless key.is_a?(String)
+    end
+  end
 
   def change_to_s(from, to)
     difference = Hash[*((from.size > to.size)    \
