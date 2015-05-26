@@ -31,17 +31,12 @@ module Puppet
 
     set_command(:sql)
 
-
     to_get_raw_resources do
       sql_on_all_database_sids "select name from dba_services"
     end
 
     on_create do | command_builder |
-      if is_cluster? 
-        create_cluster_service
-      else
-        create_service
-      end
+      create_service
       nil
     end
     
@@ -50,12 +45,7 @@ module Puppet
     end
 
     on_destroy do | command_builder |
-      disconnect_service
-      if is_cluster?
-        remove_cluster_service
-      else
-        remove_service
-      end
+      remove_service
       nil
     end
 
@@ -92,48 +82,14 @@ module Puppet
         sql "exec dbms_service.disconnect_session('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
       end
 
-
-      def delete_service
-        sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
-      end
-
-      def create_cluster_service
-        srvctl "add service -d #{dbname} -s #{service_name}  -r #{cluster_instances.join(',')}", :sid => sid
-        srvctl "start service -d #{dbname} -s #{service_name}", :sid => sid
-      end
-
       def create_service
-        new_services = current_services << service_name
-        statement = set_services_command(new_services)
-        sql statement, :sid => sid
+        sql "exec dbms_service.create_service('#{service_name}', '#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
+        sql "exec dbms_service.start_service('#{service_name}', dbms_service.all_instances)", :sid => sid, :failonsqlfail => false, :parse => false
       end
-
 
       def remove_service
-        current_services.delete(service_name)
-        statement = set_services_command(current_services)
-        sql statement, :sid => sid
+        sql "exec dbms_service.stop_service('#{service_name}', dbms_service.all_instances)", :sid => sid, :failonsqlfail => false, :parse => false
         sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
-      end
-
-      def remove_cluster_service
-        srvctl "stop service -d #{dbname} -s #{service_name}", :sid => sid
-        sql "exec dbms_service.delete_service('#{service_name}')", :sid => sid, :failonsqlfail => false, :parse => false
-        srvctl "remove service -d #{dbname} -s #{service_name} -i #{cluster_instances.join(',')}", :sid => sid
-      end
-
-      def is_cluster?
-        sql('select parallel as par from v$instance', :sid => sid).first['PAR'] == 'YES'
-      end
-
-      def cluster_instances
-        instances.nil? || instancles.count == 0 ?
-          sql('select INSTANCE_NAME from gv$instance', :sid => sid).collect {|e| e['INSTANCE_NAME']} :
-          instances          
-      end
-
-      def set_services_command(services)
-        "alter system set service_names = '#{services.join('\',\'')}' scope=both"
       end
 
       def current_services
